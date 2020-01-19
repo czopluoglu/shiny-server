@@ -27,7 +27,8 @@ shinyUI(
                    
                    hr(),
                   
-                   fluidRow(
+                   fluidRow(class = "text-center",
+                       column(5,
                               mainPanel(
                                   withMathJax(),
                                   #helpText("$$X_{ij}^{*}=\\lambda_jF_i+\\epsilon_{ij}$$"),
@@ -37,7 +38,13 @@ shinyUI(
                                   #helpText("$$P(X_{ij}^* > \\tau|F,\\lambda)=P(X_{ij}=1|F,\\lambda,\\tau)=\\int_{-z}^{\\infty}\\frac{e^{-t^2}}{2}dt$$"),
                                   #helpText("$$z=a*(F-b)$$")
                               )
+                       ),
+                       column(7,
+                              mainPanel(
+                                tableOutput('table')
+                                )
                        )
+                     )
                    ),
             
             column(width = 6,

@@ -71,7 +71,7 @@ shinyServer(function(input, output) {
         
         withMathJax(
             helpText(
-                sprintf("Residual standard deviation is \\(\\psi=\\sqrt{1-\\lambda^2}\\) = %.03f",res)
+                sprintf("Residual Standard Deviation: \\(\\psi=\\sqrt{1-\\lambda^2}\\) = %.02f",res)
             )
         )
     })
@@ -83,7 +83,7 @@ shinyServer(function(input, output) {
         
         withMathJax(
             helpText(
-                sprintf("Item discrimination is \\(a=\\frac{\\lambda}{\\psi}\\) = %.03f",a)
+                sprintf("Item Discrimination: \\(a=\\frac{\\lambda}{\\psi}\\) = %.02f",a)
             )
         )
     })
@@ -94,12 +94,28 @@ shinyServer(function(input, output) {
         
         withMathJax(
             helpText(
-                sprintf("Item difficulty is \\(b=\\frac{\\tau}{\\lambda}\\) = %.03f",b)
+                sprintf("Item Difficulty: \\(b=\\frac{\\tau}{\\lambda}\\) = %.02f",b)
             )
         )
     })
     
-    
+    output$table <- renderTable({
+        
+        lambda    = input$lambda
+        threshold = input$threshold
+        
+        theta = c(-3,-2,-1,0,1,2,3)
+        
+        err.sd = sqrt(1-lambda^2)
+        
+        probs = 1-pnorm(-(lambda*theta-threshold)/err.sd,0,err.sd)
+        
+        tab = data.frame(cbind(theta,probs))
+        
+        colnames(tab) <- c("F","Probability")
+        
+        tab
+    })
     
     
     
