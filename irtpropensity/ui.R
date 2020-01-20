@@ -35,8 +35,8 @@ shinyUI(
                                   uiOutput('restext'),
                                   uiOutput('a'),
                                   uiOutput('b'),
-                                  #helpText("$$P(X_{ij}^* > \\tau|F,\\lambda)=P(X_{ij}=1|F,\\lambda,\\tau)=\\int_{-z}^{\\infty}\\frac{e^{-t^2}}{2}dt$$"),
-                                  #helpText("$$z=a*(F-b)$$")
+                                  helpText("$$P(X_{ij}^* > \\tau|F,\\lambda)=P(X_{ij}=1|F,\\lambda,\\tau)=\\int_{-z}^{\\infty}\\frac{e^{-t^2}}{2}dt$$"),
+                                  helpText("$$z=a*(\\theta-b)$$")
                               )
                        ),
                        column(7,

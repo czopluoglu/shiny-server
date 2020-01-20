@@ -52,16 +52,24 @@ shinyServer(function(input, output) {
         lambda    = input$lambda
         threshold = input$threshold
         
+        theta = seq(-3,3,.01)
+        
+        err.sd = sqrt(1-lambda^2)
+        
+        probs = 1-pnorm(-(lambda*theta-threshold)/err.sd,0,err.sd)
+        
+        plot(theta,probs,type="l",
+             xlab="Latent Trait Score",
+             ylab="Probability of Correct Response",
+             ylim=c(0,1))
+        
         theta = c(-3,-2,-1,0,1,2,3)
         
         err.sd = sqrt(1-lambda^2)
         
         probs = 1-pnorm(-(lambda*theta-threshold)/err.sd,0,err.sd)
         
-        plot(theta,probs,type="b",
-             xlab="Latent Trait Score",
-             ylab="Probability of Correct Response",
-             ylim=c(0,1))
+        points(theta,probs,type="p",cex=2,pch=19)
         
     })
     
@@ -112,7 +120,7 @@ shinyServer(function(input, output) {
         
         tab = data.frame(cbind(theta,probs))
         
-        colnames(tab) <- c("F","Probability")
+        colnames(tab) <- c("Theta","Probability")
         
         tab
     })
