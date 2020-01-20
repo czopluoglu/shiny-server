@@ -10,6 +10,26 @@
       margin: 0;
       padding: 0;
     }
+
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Dean Attali - R-Shiny Consultant</title>
+  <meta name="author" content="Dean Attali" />
+  <meta name="keywords" content="rstats,r,shiny,r-shiny,consultant,r shiny,shiny developer,shiny expert,shiny server" />
+  <meta name="description" content="R-Shiny developer and consultant with a MSc in Bioinformatics and a Bachelor of Computer Science. Previously a software engineer at Google, IBM, and Wish.com." />
+
+  <base target="_parent" />
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto" />
+  <link rel="stylesheet" href="./css/index.css" />
+
+  <script>
+    if (location.search.indexOf("iframe") > -1) {
+      document.documentElement.className += " in-iframe";
+    }
+  </script>
     a {
       text-decoration: none;
     }
@@ -90,37 +110,36 @@
       <h1>Welcome to My Repository of Shiny Apps!<h1>
     </div>
   </div>
-  <div id="outer-content">
-    <div id="content">
-      <div id="main">
-        <h2>What's Next?</h2>
-        Now you're ready to setup Shiny &mdash; if you haven't already &mdash; and start deploying your Shiny applications.
-        <p>If you see a Shiny application running on the right side of this page, then Shiny is configured properly on your server and already running an example. Bravo! You can see this application on your server at <a href="./sample-apps/hello/">/sample-apps/hello/</a>.</p>
-        <p>If you see a gray box or an error message, then there's a bit more work to do to get Shiny running fully. You can continue with <a href="https://www.rstudio.com/products/shiny/download-server/">the installation instructions</a> or use <a href="http://docs.rstudio.com/shiny-server/">the Admin Guide</a> for more information. If you're seeing an error message in the panel to the right, you can use it to help diagnose what may be wrong. If you think Shiny is installed and setup properly and things still aren't working, you can look in the Shiny Server log which may have more information about what's wrong. By default, the log is stored in <code>/var/log/shiny-server.log</code>.</p>
-        <p>If you're really stuck <em>and you've read the relevant sections in <a href="http://docs.rstudio.com/shiny-server/">the Admin Guide</a></em> then please ask for help on our <a href="https://community.rstudio.com/c/shiny">RStudio Community forum</a>.</p>
-        
-        <h2><pre>rmarkdown</pre></h2>
-        <p>Once you have Shiny working properly (the top application on the right sidebar), you can optionally proceed to setup rmarkdown to enable your server to host Shiny docs using the <code>rmarkdown</code> package.</p>
 
-        <p>Once you have <code>rmarkdown</code> installed, the lower example to the right should also be available. Once both examples are running, you're all set to host both Shiny applications and Shiny docs!</p>
+<div id="portfolio-out">
+    <div id="portfolio">
 
-        <h2>All Done?</h2>
-        <p>Once you can see the Shiny application on the right, you're off to the races! You can look at <a href="http://shiny.rstudio.com">shiny.rstudio.com</a> to take a deeper dive into Shiny or take a look at some of the <a href="http://docs.rstudio.com/shiny-server/#quick-start">Shiny Server Quick Start Guides</a> to learn about some of the different things Shiny Server can do.</p>
-        <p>When you're all setup, you can delete this page and/or the sample applications we installed for you if you don't want them anymore. You can delete this page by running <code>sudo rm /srv/shiny-server/index.html</code> or delete the sample applications by running <code>sudo rm -rf /srv/shiny-server/sample-apps</code>.</p>
+      <div id="shinyapps-big" data-columns>
 
-      </div>
-      <div id="shiny">
-        <iframe src="./sample-apps/hello/" style="border: 1px solid #AAA; width: 290px; height: 460px"></iframe>
-        <div class="caption">
-          When Shiny is properly configured on your server, you'll see a Shiny app above.
+        <div class="shinyapp">
+             <img class="appimg" src="./img/timevis-demo.png" />
+            <div class="apptitle">
+              US NAMES DATABASE
+            </div>
         </div>
 
-        <iframe src="./sample-apps/rmd/" style="border: 1px solid #AAA; width: 290px; height: 420px"></iframe>
-        <div class="caption">
-          With Shiny and <code>rmarkdown</code> installed, you should see a Shiny doc above.
+        <div class="shinyapp">
+          <a class="applink" href="./bcl/">
+            <img class="appimg" src="./img/bcl.png" />
+            <div class="apptitle">
+              BC Liquor Store prices
+            </div>
+            <div class="appdesc">
+              Simple app that is built as part of a Shiny tutorial I've written. The app lets you find what to get from the liquor store based on filters you choose.
+            </div>
+          </a>
         </div>
+
       </div>
     </div>
   </div>
+
+    }
+
 </body>
 </html>
