@@ -31,7 +31,7 @@ shinyUI(
                        column(5,
                               mainPanel(
                                   withMathJax(),
-                                  #helpText("$$X_{ij}^{*}=\\lambda_jF_i+\\epsilon_{ij}$$"),
+                                  helpText("$$X_{ij}^{*}=\\lambda_jF_i+\\epsilon_{ij}$$"),
                                   uiOutput('restext'),
                                   uiOutput('a'),
                                   uiOutput('b'),
