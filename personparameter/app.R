@@ -17,7 +17,7 @@ ui <- fluidPage(
     fluidRow(
         column(4,
                
-               sliderInput("n", label = h4("Select the Number of Items"), min = 5, max = 10, value = 10),
+               sliderInput("n", label = h4("Select the Number of Items"), min = 5, max = 15, value = 15),
                
               # actionBttn("GenItem", 
               #            label = "Generate the Item Parameters",
@@ -26,7 +26,7 @@ ui <- fluidPage(
               #            color="primary",
               #            size = "sm"),
               
-              selectInput("model", label = h3("Select the Model and Generate Item Parameters"), 
+              selectInput("model", label = h4("Select the Model and Generate Item Parameters"), 
                           choices = list("1PL" = 1, 
                                          "2PL" = 2, 
                                          "3PL" = 3,
@@ -38,25 +38,33 @@ ui <- fluidPage(
                #checkboxInput("guessing", label = "Fix the guessing parameters to 0", value = FALSE),
                #checkboxInput("slipping", label = "Fix the slipping parameters to 1", value = FALSE),
                
+
+              
                mainPanel(tableOutput("ipar")),
                
                actionBttn("Genresp", 
-                          label = "Generate the Response Vector",
-                          icon=icon("play"), 
-                          style="simple",
-                          color="primary",
-                          size = "sm"),
-               
-              conditionalPanel(
+                            label = "Simulate a New Response Vector",
+                            icon=icon("play"), 
+                            style="simple",
+                           color="primary",
+                            size = "xs"),
+              
+              
+             # conditionalPanel(
                 
-                condition = "input.Genresp==1",
-                textInput('resp', 'You can manipulate the response vector manuall below'),
-                helpText("*The length of response vector should be same as the number of items you selected."),
-                helpText("**The response vector should be comma separated."),
-                helpText("*** The response vector should include only 0 (incorrect response) or 1 (correct response).")
-                
-                
-              ) 
+             #    condition = "input.Genresp==1",
+             #    textInput('resp', 'You can manipulate the response vector manuall below'),
+             #    helpText("*The length of response vector should be same as the number of items you selected."),
+             #    helpText("**The response vector should be comma separated."),
+             #    helpText("*** The response vector should include only 0 (incorrect response) or 1 (correct response).")
+             #  ) 
+             
+             mainPanel(
+                 textInput('resp', 'You can manipulate the response vector manuall below'),
+                 helpText("*The length of response vector should be same as the number of items you selected."),
+                 helpText("**The response vector should be comma separated."),
+                 helpText("*** The response vector should include only 0 (incorrect response) or 1 (correct response).")
+               ) 
               
         ),
         
@@ -64,53 +72,65 @@ ui <- fluidPage(
                mainPanel(
                    tabsetPanel(
                      
-                       tabPanel("Guesstimate", align='center',
+                       tabPanel("Guess MLE", align='center',
                                 
                                 br(),
                                 br(),
                                 
-                                conditionalPanel(
-                                  condition = "input.Genresp==1",
-                                  tableOutput("resp2")),
+                                mainPanel(
+                                  tableOutput("resp2")
+                                  ),
                                 
-                                conditionalPanel(
-                                  condition = "input.Genresp==1",
+                                mainPanel(
                                   plotOutput('plot')
-                                ),
+                                  ),
                                 
-                                br(),
                                 br(),
                                 br(),
                                 
                                 fluidRow(
+                                  
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  br(),
+
+                                  
                                   column(4,
-                                         conditionalPanel(
-                                           h3("Guess Theta"),
-                                           condition = "input.Genresp==1",
-                                           numericInput("theta.est", 
-                                                        label = "", 
-                                                        value = NULL,
-                                                        width='40%'),
-                                            actionBttn("guess", 
-                                                       label = "Run", 
-                                                       style="simple",
-                                                       color="primary",
-                                                       size = "xs"),
-                                           
-                                         )
+                                         fluidRow(
+                                                  numericInput("theta.est", 
+                                                               label = "", 
+                                                               value = 0,
+                                                               width='50%')
+                                           ),
+                                         
+                                         fluidRow(
+                                                  actionBttn("guess", 
+                                                             label = "Guess", 
+                                                             style="simple",
+                                                             color="primary",
+                                                             size = "sm")
+                                           )
                                          ),
                                   
                                   column(8,
-                                         "A"
+                                         'Output',
+                                           tableOutput("guess")
+                                         
+                                         
                                          )
                                   
                                 )
                                 
+                                
                                 )
-                                
-                                
-                                
-                                ),
+                       ),
                        
                        tabPanel("Summary"), 
                        tabPanel("Table")
@@ -122,6 +142,7 @@ ui <- fluidPage(
 #########################################################################
 
 server <- function(input, output,session) {
+
   
   tabb <- reactive({
     
@@ -174,11 +195,21 @@ server <- function(input, output,session) {
    output$ipar  <- renderTable({tabb.table()})
 
   ####################################################
+
+   respdf <- reactive({
+     resp = rbinom(input$n,1,.5)
+     resp
+   })
+   
+   observe({
+     
+     updateTextInput(session, "resp", value = respdf())
+     
+   })
    
   
-  observe({
+  observeEvent(input$Genresp,{
     
-      x <- input$n
       ipars <- tabb()
       
       th = runif(1,-2,2)
@@ -201,7 +232,7 @@ server <- function(input, output,session) {
     
       updateTextInput(session, "resp", value = rvec)
   })
-    
+
   respvec <- eventReactive(input$resp, {
     matrix(as.numeric(unlist(strsplit(input$resp,","))),nrow=input$n,ncol=1)
   })
@@ -223,6 +254,22 @@ server <- function(input, output,session) {
   
   ####################################################
   
+  guessm <- eventReactive(input$guess, {
+    if(input$theta.est==1){
+      matrix(1,nrow=5,ncol=2)
+    } else {
+      matrix(NA,nrow=5,ncol=2)
+    }
+  })
+  
+  output$guess <- renderTable({
+    guessmatrix = guessm()
+    guessmatrix
+    })
+    
+  
+  ####################################################
+  
   
   output$plot <- renderPlot({
   
@@ -234,7 +281,7 @@ server <- function(input, output,session) {
       c+((d-c)*(num/(1+num)))
     }
     
-    t <- seq(-3,3,.01)
+    t <- seq(-4,4,.01)
     
     loglik <- c()
     
@@ -250,7 +297,8 @@ server <- function(input, output,session) {
       
     }
     
-    plot(t,loglik,type="l",lty=2,col="gray",xlab="Theta",ylab="Log-likelihood")
+    plot(t,loglik,type="l",lty=2,col="gray",xlab="Theta",ylab="Log-likelihood",
+         ylim=c(min(loglik)*1.1,max(loglik)*.9))
     
   })
   
