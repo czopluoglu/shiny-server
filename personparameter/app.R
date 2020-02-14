@@ -25,11 +25,18 @@ ui <- fluidPage(
               #            style="simple",
               #            color="primary",
               #            size = "sm"),
-               
-               checkboxInput("rasch", label = "Fix the discrimination parameters to 1.7", value = FALSE),
-               checkboxInput("disc", label = "Fix the discrimination parameters to be same", value = FALSE),
-               checkboxInput("guessing", label = "Fix the guessing parameters to 0", value = FALSE),
-               checkboxInput("slipping", label = "Fix the slipping parameters to 1", value = FALSE),
+              
+              selectInput("model", label = h3("Select the Model and Generate Item Parameters"), 
+                          choices = list("1PL" = 1, 
+                                         "2PL" = 2, 
+                                         "3PL" = 3,
+                                         "4PL" = 4), 
+                          selected = 2),
+              
+               #checkboxInput("rasch", label = "Fix the discrimination parameters to 1.7", value = FALSE),
+               #checkboxInput("disc", label = "Fix the discrimination parameters to be same", value = FALSE),
+               #checkboxInput("guessing", label = "Fix the guessing parameters to 0", value = FALSE),
+               #checkboxInput("slipping", label = "Fix the slipping parameters to 1", value = FALSE),
                
                mainPanel(tableOutput("ipar")),
                
@@ -56,9 +63,9 @@ ui <- fluidPage(
         column(8,
                mainPanel(
                    tabsetPanel(
+                     
                        tabPanel("Guesstimate", align='center',
                                 
-                                br(),
                                 br(),
                                 br(),
                                 
@@ -69,7 +76,39 @@ ui <- fluidPage(
                                 conditionalPanel(
                                   condition = "input.Genresp==1",
                                   plotOutput('plot')
+                                ),
+                                
+                                br(),
+                                br(),
+                                br(),
+                                
+                                fluidRow(
+                                  column(4,
+                                         conditionalPanel(
+                                           h3("Guess Theta"),
+                                           condition = "input.Genresp==1",
+                                           numericInput("theta.est", 
+                                                        label = "", 
+                                                        value = NULL,
+                                                        width='40%'),
+                                            actionBttn("guess", 
+                                                       label = "Run", 
+                                                       style="simple",
+                                                       color="primary",
+                                                       size = "xs"),
+                                           
+                                         )
+                                         ),
+                                  
+                                  column(8,
+                                         "A"
+                                         )
+                                  
                                 )
+                                
+                                )
+                                
+                                
                                 
                                 ),
                        
@@ -79,7 +118,6 @@ ui <- fluidPage(
                )
         )
     )
-)
 
 #########################################################################
 
@@ -91,25 +129,32 @@ server <- function(input, output,session) {
     tab[,1] = 1:input$n
     colnames(tab) <- c("Item","a","b","c","d")
     
-    tab[,2] = rlnorm(input$n,0,.5)
-    tab[,3] = rnorm(input$n,0,1)
-    tab[,4] = runif(input$n,0,.25)
-    tab[,5] = runif(input$n,0.9,1)
-    
-    if(input$guessing==TRUE){
-      tab[,4]=0
+    if(input$model==4){
+      tab[,2] = rlnorm(input$n,0,.5)
+      tab[,3] = rnorm(input$n,0,1)
+      tab[,4] = runif(input$n,0,.25)
+      tab[,5] = runif(input$n,0.9,1)
     }
     
-    if(input$slipping==TRUE){
-      tab[,5]=1
+    if(input$model==3){
+      tab[,2] = rlnorm(input$n,0,.5)
+      tab[,3] = rnorm(input$n,0,1)
+      tab[,4] = runif(input$n,0,.25)
+      tab[,5] = 1
     }
     
-    if(input$rasch==TRUE){
-      tab[,2]=1.7
+    if(input$model==2){
+      tab[,2] = rlnorm(input$n,0,.5)
+      tab[,3] = rnorm(input$n,0,1)
+      tab[,4] = 0
+      tab[,5] = 1
     }
     
-    if(input$disc==TRUE){
-      tab[,2]=rlnorm(1,0,.5)
+    if(input$model==1){
+      tab[,2] = rlnorm(1,0,.5)
+      tab[,3] = rnorm(input$n,0,1)
+      tab[,4] = 0
+      tab[,5] = 1
     }
     
     tab 
@@ -136,7 +181,7 @@ server <- function(input, output,session) {
       x <- input$n
       ipars <- tabb()
       
-      th = rnorm(1,0,1)
+      th = runif(1,-2,2)
       
       p <- function(theta,a,b,c,d){
         num = exp(a*(theta-b))
@@ -158,7 +203,7 @@ server <- function(input, output,session) {
   })
     
   respvec <- eventReactive(input$resp, {
-    as.numeric(unlist(strsplit(input$resp,",")))
+    matrix(as.numeric(unlist(strsplit(input$resp,","))),nrow=input$n,ncol=1)
   })
   
   output$resp2  <- renderTable({
@@ -182,7 +227,7 @@ server <- function(input, output,session) {
   output$plot <- renderPlot({
   
     ipars <- tabb()
-    responses <- as.numeric(unlist(strsplit(input$resp,",")))
+    responses2 <- as.numeric(unlist(strsplit(input$resp,",")))
     
     p <- function(theta,a,b,c,d){
       num = exp(a*(theta-b))
@@ -201,11 +246,11 @@ server <- function(input, output,session) {
         pvec[j] = p(theta=t[i],a=ipars[j,2],b=ipars[j,3],c=ipars[j,4],d=ipars[j,5])  
       }
       
-      loglik[i] =   sum(log((responses*pvec) + ((1-responses)*(1-pvec))))
+      loglik[i] =   sum(log((responses2*pvec) + ((1-responses2)*(1-pvec))))
       
     }
     
-    plot(t,loglik,type="l",lty=2,col="gray")
+    plot(t,loglik,type="l",lty=2,col="gray",xlab="Theta",ylab="Log-likelihood")
     
   })
   
