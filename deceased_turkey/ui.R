@@ -12,7 +12,11 @@ shinyUI(fluidPage(
 
     fluidRow(
         column(2,
-               h4("Select Cities"),
+               
+            br(),
+            br(),
+            tags$h3("Select Cities"),
+               br(),
                checkboxInput('bursa', 'Bursa',value=TRUE),
                checkboxInput('denizli', 'Denizli',value=TRUE),
                checkboxInput('diyarbakir', 'Diyarbakir',value=TRUE),
@@ -23,70 +27,131 @@ shinyUI(fluidPage(
                checkboxInput('malatya', 'Malatya',value=TRUE),
                checkboxInput('sakarya', 'Sakarya',value=TRUE),
                checkboxInput('tekirdag', 'Tekirdag',value=TRUE),
-        ),
+               
+            hr(),
+            
+            uiOutput("info3"),
+            
+            h5("You can compare the number of deceased individuals for any given day
+            in 2020 to the number of deceased individuals in the past 10 years
+            on the same day."),
+            br(),
+            hr(),
+            textOutput("finalupdate"),
+            hr(),
+            
+            h5("Cengiz Zopluoglu"),
+            uiOutput("info"),
+            uiOutput("info2"),
+            
+               ),
         
         column(10,
                mainPanel(
                    tabsetPanel(
                        
-                       tabPanel("By Date", align='center',
-                                
+                       tabPanel("Single Date", align='center',
+                            
                                 fluidRow(
-                                    h5("The data presented in this dashboard are compiled from www.turkiye.gov.tr 
-                                    and updated daily. You can compare the number of deceased individuals in 2020
-                                    for any given day to the number of deceased individuals in the past 10 years
-                                       on the same day.")
-                                ),
-                                
-                                fluidRow(
-                                    h5("Feel free to reach out for questions and reporting any bugs."),
-                                    uiOutput("info")
-                                ),
-                                
-                                fluidRow(
-                                    h5("Enter date in DD/MM/YYYY format. The data goes back to 01/01/2010")
-                                ),
-                                
+                                    h5("Enter date in DD/MM/YYYY format"),
+                                    column(4),
+                                    column(4,
+                                           textInput('date',label=NULL,value="22/03/2020")
+                                    ),
+                                    column(4)
+                                    ),
+                            
                                 fluidRow(
                                     column(4),
                                     column(4,
-                                           textInput('date',label=NULL,value="22/04/2010")
+                                       actionBttn("submit", 
+                                                  label = "Submit",
+                                                  icon=icon("play"), 
+                                                  style="simple",
+                                                  color="primary",
+                                                  size = "sm")),
+                                    column(4)
                                     ),
-                                    column(4,
-                                           actionBttn("submit", 
+                                
+                                fluidRow(
+                                    column(10,
+                                           mainPanel(
+                                               plotOutput('plot',width = "100%",height="100%")
+                                           )
+                                           ),
+                                    
+                                    column(2,
+                                           tableOutput("table1")
+                                           ),
+                                ),
+                            
+                                fluidRow(
+                                    column(10,
+                                           mainPanel(
+                                               plotOutput('plot2',width = "100%",height="100%")
+                                        )
+                                    ),
+                                
+                                    column(2,
+                                           tableOutput("table2")
+                                    ),
+                                )
+                                
+                       ),
+                       
+                       tabPanel("Date Range", align='center',
+                                
+                                fluidRow(
+                                    h5("Enter date in DD/MM/YYYY format"),
+                                    column(3),
+                                    column(3,
+                                           textInput('begin',label="Beginning Date",value="22/03/2020")
+                                           ),
+                                    column(2),
+                                    column(3,
+                                           textInput('end',label="End Date",value="22/03/2020")
+                                    ),
+                                    column(1)
+                                    
+                                ),
+                                
+                                fluidRow(
+                                    column(3),
+                                    column(3),
+                                    column(2,
+                                           actionBttn("submit2", 
                                                       label = "Submit",
                                                       icon=icon("play"), 
                                                       style="simple",
                                                       color="primary",
-                                                      size = "sm"))
+                                                      size = "sm")),
+                                    column(3),
+                                    column(1)
                                 ),
                                 
                                 fluidRow(
-                                    column(5,
-                                           plotOutput('plot',width = "100%")
-                                           ),
-                                    
-                                    column(2,'AAA'),
-                                    
-                                    column(5,
-                                           plotOutput('plot2',width = "100%")
+                                    column(10,
+                                           mainPanel(
+                                               plotOutput('plot3',width = "100%",height="100%")
                                            )
+                                    ),
+                                    
+                                    column(2,
+                                           tableOutput("table3")
+                                    ),
                                 ),
                                 
                                 fluidRow(
-                                    column(5,'AAA'),
-                                    column(2),
-                                    column(5,'AAA')
+                                    column(10,
+                                           mainPanel(
+                                               plotOutput('plot4',width = "100%",height="100%")
+                                           )
+                                    ),
+                                    
+                                    column(2,
+                                           tableOutput("table4")
+                                    ),
                                 )
-                                
-                                
-                       ),
-                       
-                       tabPanel("By Month", align='center',
-                                
-                                sliderInput("n", 
-                                            label = h4("AAA"), 
-                                            min = 5, max = 15, value = 15)
                        )
                    )
                )
