@@ -8,8 +8,8 @@ a5 = read.csv("kahramanmaras.csv",header=TRUE)
 a6 = read.csv("kocaeli.csv",header=TRUE)
 a7 = read.csv("konya.csv",header=TRUE)
 a8 = read.csv("malatya.csv",header=TRUE)
-a9 = read.csv("malatya.csv",header=TRUE)
-a10 = read.csv("malatya.csv",header=TRUE)
+a9 = read.csv("sakarya.csv",header=TRUE)
+a10 = read.csv("tekirdag.csv",header=TRUE)
 
 data <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
 
@@ -40,5 +40,9 @@ data <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
   
   save.image("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/data.Rdata")
   
+  write.csv(data,
+            "C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/turkey_deceased.csv",
+            row.names=FALSE)
+
 
   
