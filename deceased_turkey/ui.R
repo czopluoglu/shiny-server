@@ -17,16 +17,16 @@ shinyUI(fluidPage(
             br(),
             tags$h3("Select Cities"),
                br(),
-               checkboxInput('bursa', 'Bursa',value=TRUE),
-               checkboxInput('denizli', 'Denizli',value=TRUE),
-               checkboxInput('diyarbakir', 'Diyarbakir',value=TRUE),
-               checkboxInput('istanbul', 'Istanbul',value=TRUE),
-               checkboxInput('kahramanmaras', 'Kahramanmaras',value=TRUE),
-               checkboxInput('kocaeli', 'Kocaeli',value=TRUE),
-               checkboxInput('konya', 'Konya',value=TRUE),
-               checkboxInput('malatya', 'Malatya',value=TRUE),
-               checkboxInput('sakarya', 'Sakarya',value=TRUE),
-               checkboxInput('tekirdag', 'Tekirdag',value=TRUE),
+               checkboxInput('bursa', 'Bursa',value=FALSE),
+               checkboxInput('denizli', 'Denizli',value=FALSE),
+               checkboxInput('diyarbakir', 'Diyarbakir',value=FALSE),
+               checkboxInput('istanbul', 'Istanbul',value=FALSE),
+               checkboxInput('kahramanmaras', 'Kahramanmaras',value=FALSE),
+               checkboxInput('kocaeli', 'Kocaeli',value=FALSE),
+               checkboxInput('konya', 'Konya',value=FALSE),
+               checkboxInput('malatya', 'Malatya',value=FALSE),
+               checkboxInput('sakarya', 'Sakarya',value=FALSE),
+               checkboxInput('tekirdag', 'Tekirdag',value=FALSE),
                
             hr(),
             
@@ -52,11 +52,12 @@ shinyUI(fluidPage(
                        
                        tabPanel("Single Date", align='center',
                             
+                                br(),
+                                
                                 fluidRow(
-                                    h5("Enter date in DD/MM/YYYY format"),
                                     column(4),
                                     column(4,
-                                           textInput('date',label=NULL,value="22/03/2020")
+                                           textInput('date',label='Enter date in DD/MM/YYYY format',value="22/03/2020")
                                     ),
                                     column(4)
                                     ),
@@ -73,18 +74,23 @@ shinyUI(fluidPage(
                                     column(4)
                                     ),
                                 
+                                hr(),
+                                
                                 fluidRow(
                                     column(10,
                                            mainPanel(
                                                plotOutput('plot',width = "100%",height="100%")
-                                           )
+                                           ),
+                                     
                                            ),
                                     
                                     column(2,
                                            tableOutput("table1")
-                                           ),
+                                           )
                                 ),
-                            
+                                
+                                hr(),
+                                
                                 fluidRow(
                                     column(10,
                                            mainPanel(
@@ -95,7 +101,8 @@ shinyUI(fluidPage(
                                     column(2,
                                            tableOutput("table2")
                                     ),
-                                )
+                                ),
+                                
                                 
                        ),
                        
@@ -129,6 +136,8 @@ shinyUI(fluidPage(
                                     column(1)
                                 ),
                                 
+                                hr(),
+                                
                                 fluidRow(
                                     column(10,
                                            mainPanel(
@@ -141,6 +150,7 @@ shinyUI(fluidPage(
                                     ),
                                 ),
                                 
+                                hr(),
                                 fluidRow(
                                     column(10,
                                            mainPanel(
