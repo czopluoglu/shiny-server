@@ -40,113 +40,10 @@ shinyServer(function(input, output) {
     
     
     ##############################################################################
-    
-    values <- reactiveValues(sub  = NULL,
-                             sub2 = NULL
-                             )
-    
-    
-    ##############################################################################
 
     myplot <- eventReactive(req(isTruthy(input$submit)),{
       
-      cities = c('bursa','denizli','diyarbakir','istanbul','kahramanmaras',
-                 'kocaeli','konya','malatya','sakarya','tekirdag')
-      
-      d <- vector("list",10)
-      
-      if(input$bursa==1){
-        d[[1]] = data[which(data$Sehir==cities[1]),]
-      } else {
-        d[[1]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$denizli==1){
-        d[[2]] = data[which(data$Sehir==cities[2]),]
-      } else {
-        d[[2]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$diyarbakir==1){
-        d[[3]] = data[which(data$Sehir==cities[3]),]
-      } else {
-        d[[3]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$istanbul==1){
-        d[[4]] = data[which(data$Sehir==cities[4]),]
-      } else {
-        d[[4]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$kahramanmaras==1){
-        d[[5]] = data[which(data$Sehir==cities[5]),]
-      } else {
-        d[[5]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$kocaeli==1){
-        d[[6]] = data[which(data$Sehir==cities[6]),]
-      } else {
-        d[[6]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$konya==1){
-        d[[7]] = data[which(data$Sehir==cities[7]),]
-      } else {
-        d[[7]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$malatya==1){
-        d[[8]] = data[which(data$Sehir==cities[8]),]
-      } else {
-        d[[8]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$sakarya==1){
-        d[[9]] = data[which(data$Sehir==cities[9]),]
-      } else {
-        d[[9]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$tekirdag==1){
-        d[[10]] = data[which(data$Sehir==cities[10]),]
-      } else {
-        d[[10]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      dl <- c()
-      for(i in 1:10){
-        dl[i]=nrow(d[[i]])
-      }
-      
-      s = which(dl!=1)
-      
-      subdata = d[[s[1]]]
-      
-      if(length(s)>1){
-        for(i in 2:length(s)){
-          subdata = rbind(subdata,d[[s[i]]])
-        }
-      }
-      
-      values$sub <- subdata
-      
-      
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-      
-      mm = which(M==input$month)
-      
       
       date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
                         format="%d/%m/%Y")
@@ -158,22 +55,20 @@ shinyServer(function(input, output) {
       dates <- format(date,format="%d/%m/%Y")
       
       
-      sub = subdata[subdata$OlumTar%in%dates,]
+      sub1 = data[data$OlumTar%in%dates,]
 
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub1$day  <- substring(sub1$OlumTar,1,5)
+      sub1$year <- substring(sub1$OlumTar,7,11)
+      sub1$count <- 1
       
-      plotd <- aggregate(count ~ year,data=sub,FUN=sum)
+      plotd <- aggregate(count ~ year,data=sub1,FUN=sum)
       colnames(plotd) <- c("Year","Total")
       plotd$Year <- as.numeric(plotd$Year)
       
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
-      #                interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
-                      interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       
       title.d <- paste0(input$month," ",input$day)
@@ -201,8 +96,7 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
    
     tab1 <- eventReactive(req(isTruthy(input$submit)), {
-      
-      
+
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
       date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
@@ -214,16 +108,17 @@ shinyServer(function(input, output) {
       date <- seq.Date(date2,date1, by='years')
       dates <- format(date,format="%d/%m/%Y")
       
-      sub = values$sub[values$sub$OlumTar%in%dates,]
       
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub1 = data[data$OlumTar%in%dates,]
       
-      plotd <- aggregate(count ~ year,data=sub,FUN=sum)
+      sub1$day  <- substring(sub1$OlumTar,1,5)
+      sub1$year <- substring(sub1$OlumTar,7,11)
+      sub1$count <- 1
+      
+      plotd <- aggregate(count ~ year,data=sub1,FUN=sum)
       colnames(plotd) <- c("Year","Total")
       plotd$Year <- as.numeric(plotd$Year)
-      
+
       plotd
     })
     
@@ -235,11 +130,9 @@ shinyServer(function(input, output) {
     
     myplot2 <- eventReactive(req(isTruthy(input$submit)),{
       
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
-      #                interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
-                      interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
@@ -253,13 +146,13 @@ shinyServer(function(input, output) {
       date <- seq.Date(date2,date1, by='years')
       dates <- format(date,format="%d/%m/%Y")
       
-      sub = values$sub[values$sub$OlumTar%in%dates,]
+      sub2 = data[data$OlumTar%in%dates,]
       
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub2$day  <- substring(sub2$OlumTar,1,5)
+      sub2$year <- substring(sub2$OlumTar,7,11)
+      sub2$count <- 1
       
-      plotd2 <- aggregate(count ~ year,data=sub[which(sub$Yasi>64),],FUN=sum)
+      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
       colnames(plotd2) <- c("Year","Total")
       plotd2$Year <- as.numeric(plotd2$Year)
       
@@ -301,13 +194,13 @@ shinyServer(function(input, output) {
       date <- seq.Date(date2,date1, by='years')
       dates <- format(date,format="%d/%m/%Y")
       
-      sub = values$sub[values$sub$OlumTar%in%dates,]
+      sub2 = data[data$OlumTar%in%dates,]
       
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub2$day  <- substring(sub2$OlumTar,1,5)
+      sub2$year <- substring(sub2$OlumTar,7,11)
+      sub2$count <- 1
       
-      plotd2 <- aggregate(count ~ year,data=sub[which(sub$Yasi>64),],FUN=sum)
+      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
       colnames(plotd2) <- c("Year","Total")
       plotd2$Year <- as.numeric(plotd2$Year)
       
@@ -321,100 +214,6 @@ shinyServer(function(input, output) {
     #################################################################################
     
     myplot3 <- eventReactive(req(isTruthy(input$submit2)),{
-      
-      cities = c('bursa','denizli','diyarbakir','istanbul','kahramanmaras',
-                 'kocaeli','konya','malatya','sakarya','tekirdag')
-      
-      d <- vector("list",10)
-      
-      if(input$bursa==1){
-        d[[1]] = data[which(data$Sehir==cities[1]),]
-      } else {
-        d[[1]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$denizli==1){
-        d[[2]] = data[which(data$Sehir==cities[2]),]
-      } else {
-        d[[2]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$diyarbakir==1){
-        d[[3]] = data[which(data$Sehir==cities[3]),]
-      } else {
-        d[[3]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$istanbul==1){
-        d[[4]] = data[which(data$Sehir==cities[4]),]
-      } else {
-        d[[4]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$kahramanmaras==1){
-        d[[5]] = data[which(data$Sehir==cities[5]),]
-      } else {
-        d[[5]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$kocaeli==1){
-        d[[6]] = data[which(data$Sehir==cities[6]),]
-      } else {
-        d[[6]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$konya==1){
-        d[[7]] = data[which(data$Sehir==cities[7]),]
-      } else {
-        d[[7]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$malatya==1){
-        d[[8]] = data[which(data$Sehir==cities[8]),]
-      } else {
-        d[[8]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$sakarya==1){
-        d[[9]] = data[which(data$Sehir==cities[9]),]
-      } else {
-        d[[9]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      if(input$tekirdag==1){
-        d[[10]] = data[which(data$Sehir==cities[10]),]
-      } else {
-        d[[10]] = matrix(NA,nrow=1,ncol=1)
-      }
-      
-      
-      dl <- c()
-      for(i in 1:10){
-        dl[i]=nrow(d[[i]])
-      }
-      
-      s = which(dl!=1)
-      
-      subdata = d[[s[1]]]
-      
-      if(length(s)>1){
-        for(i in 2:length(s)){
-          subdata = rbind(subdata,d[[s[i]]])
-        }
-      }
-      
-      
-      values$sub2 <- subdata
-      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -431,22 +230,19 @@ shinyServer(function(input, output) {
       }
       
       
-      sub = subdata[subdata$OlumTar%in%dates,]
+      sub3 = data[data$OlumTar%in%dates,]
       
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub3$day  <- substring(sub3$OlumTar,1,5)
+      sub3$year <- substring(sub3$OlumTar,7,11)
+      sub3$count <- 1
       
-      plotd3 <- aggregate(count ~ year,data=sub,FUN=sum)
+      plotd3 <- aggregate(count ~ year,data=sub3,FUN=sum)
       colnames(plotd3) <- c("Year","Total")
       plotd3$Year <- as.numeric(plotd3$Year)
       
-       t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
-                      interpolate = TRUE)
-                      
-                      
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
-      #                interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
                         input$month.end," ",input$day.end)
@@ -459,7 +255,7 @@ shinyServer(function(input, output) {
         scale_x_continuous(breaks=plotd3[,1])+
         scale_y_continuous(limits=c(0,max(plotd3[,2]*1.2)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=2018, xmax=2020, 
+                          xmin=max(plotd3[,1])-2, xmax=max(plotd3[,1]), 
                           ymin=10, ymax=10) +
         annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd3[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
@@ -489,13 +285,14 @@ shinyServer(function(input, output) {
                   c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
       }
       
-      sub = values$sub2[values$sub2$OlumTar%in%dates,]
       
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub3 = data[data$OlumTar%in%dates,]
       
-      plotd3 <- aggregate(count ~ year,data=sub,FUN=sum)
+      sub3$day  <- substring(sub3$OlumTar,1,5)
+      sub3$year <- substring(sub3$OlumTar,7,11)
+      sub3$count <- 1
+      
+      plotd3 <- aggregate(count ~ year,data=sub3,FUN=sum)
       colnames(plotd3) <- c("Year","Total")
       plotd3$Year <- as.numeric(plotd3$Year)
       
@@ -525,22 +322,18 @@ shinyServer(function(input, output) {
       }
       
       
-      sub = values$sub2[values$sub2$OlumTar%in%dates,]
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
+      sub4 = data[data$OlumTar%in%dates,]
+      sub4$day  <- substring(sub4$OlumTar,1,5)
+      sub4$year <- substring(sub4$OlumTar,7,11)
+      sub4$count <- 1
       
-      sub2 <- sub[which(sub$Yasi>64),]
-      
-      plotd4 <- aggregate(count ~ year,data=sub2,FUN=sum)
+      plotd4           <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
       colnames(plotd4) <- c("Year","Total")
-      plotd4$Year <- as.numeric(plotd4$Year)
+      plotd4$Year      <- as.numeric(plotd4$Year)
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
-                       interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
      
-     # t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
-     #                  interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
                         input$month.end," ",input$day.end)
@@ -553,7 +346,7 @@ shinyServer(function(input, output) {
         scale_x_continuous(breaks=plotd4[,1])+
         scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=2018, xmax=2020, 
+                          xmin=max(plotd2[,1])-2, xmax=max(plotd2[,1]), 
                           ymin=10, ymax=10) +
         annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
@@ -582,14 +375,13 @@ shinyServer(function(input, output) {
                   c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
       }
       
-      sub = values$sub2[values$sub2$OlumTar%in%dates,]
-      sub$day  <- substring(sub$OlumTar,1,5)
-      sub$year <- substring(sub$OlumTar,7,11)
-      sub$count <- 1
       
-      sub2 <- sub[which(sub$Yasi>64),]
+      sub4 = data[data$OlumTar%in%dates,]
+      sub4$day  <- substring(sub4$OlumTar,1,5)
+      sub4$year <- substring(sub4$OlumTar,7,11)
+      sub4$count <- 1
       
-      plotd4 <- aggregate(count ~ year,data=sub2,FUN=sum)
+      plotd4 <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
       colnames(plotd4) <- c("Year","Total")
       plotd4$Year <- as.numeric(plotd4$Year)
       

@@ -15,19 +15,20 @@ shinyUI(fluidPage(
                
             br(),
             br(),
-            tags$h3("Select Cities"),
-               br(),
-               checkboxInput('bursa', 'Bursa',value=FALSE),
-               checkboxInput('denizli', 'Denizli',value=FALSE),
-               checkboxInput('diyarbakir', 'Diyarbakir',value=FALSE),
-               checkboxInput('istanbul', 'Istanbul',value=TRUE),
-               checkboxInput('kahramanmaras', 'Kahramanmaras',value=FALSE),
-               checkboxInput('kocaeli', 'Kocaeli',value=FALSE),
-               checkboxInput('konya', 'Konya',value=FALSE),
-               checkboxInput('malatya', 'Malatya',value=FALSE),
-               checkboxInput('sakarya', 'Sakarya',value=FALSE),
-               checkboxInput('tekirdag', 'Tekirdag',value=FALSE),
-               
+            tags$h4("The numbers reported on this page are based on 
+                    the following major cities the data is available on
+                    www.turkey.gov.tr:"),
+            h5("- Bursa"),
+            h5("- Denizli"),
+            h5("- Diyarbakir"),
+            h5("- Istanbul"),
+            h5("- Kahramanmaras"),
+            h5("- Kocaeli"),
+            h5("- Konya"),
+            h5("- Malatya"),
+            h5("- Sakarya"),
+            h5("- Tekirdag"),
+            br(),
             hr(),
             
             uiOutput("info3"),
