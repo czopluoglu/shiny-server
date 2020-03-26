@@ -346,7 +346,7 @@ shinyServer(function(input, output) {
         scale_x_continuous(breaks=plotd4[,1])+
         scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=max(plotd2[,1])-2, xmax=max(plotd2[,1]), 
+                          xmin=max(plotd4[,1])-2, xmax=max(plotd4[,1]), 
                           ymin=10, ymax=10) +
         annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),

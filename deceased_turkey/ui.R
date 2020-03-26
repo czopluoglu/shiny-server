@@ -15,8 +15,8 @@ shinyUI(fluidPage(
                
             br(),
             br(),
-            tags$h4("The numbers reported on this page are based on 
-                    the following major cities the data is available on
+            tags$h5("The numbers reported on this page include 
+                    the following major cities in which the data are available on
                     www.turkey.gov.tr:"),
             h5("- Bursa"),
             h5("- Denizli"),
