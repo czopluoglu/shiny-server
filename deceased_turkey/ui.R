@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                checkboxInput('bursa', 'Bursa',value=FALSE),
                checkboxInput('denizli', 'Denizli',value=FALSE),
                checkboxInput('diyarbakir', 'Diyarbakir',value=FALSE),
-               checkboxInput('istanbul', 'Istanbul',value=FALSE),
+               checkboxInput('istanbul', 'Istanbul',value=TRUE),
                checkboxInput('kahramanmaras', 'Kahramanmaras',value=FALSE),
                checkboxInput('kocaeli', 'Kocaeli',value=FALSE),
                checkboxInput('konya', 'Konya',value=FALSE),
@@ -55,11 +55,16 @@ shinyUI(fluidPage(
                                 br(),
                                 
                                 fluidRow(
-                                    column(4),
+                                    column(2),
                                     column(4,
-                                           textInput('date',label='Enter date in DD/MM/YYYY format',value="22/03/2020")
+                                           selectInput("month", "Month",
+                                                       c("Jan","Feb","Mar","Apr","May","Jun",
+                                                         "Jul","Aug","Sep","Oct","Nov","Dec"))
                                     ),
-                                    column(4)
+                                    column(4,
+                                           selectInput("day", "Day",c(1:31))
+                                    ),
+                                    column(2)
                                     ),
                             
                                 fluidRow(
@@ -109,22 +114,34 @@ shinyUI(fluidPage(
                        tabPanel("Date Range", align='center',
                                 
                                 fluidRow(
-                                    h5("Enter date in DD/MM/YYYY format"),
-                                    column(3),
-                                    column(3,
-                                           textInput('begin',label="Beginning Date",value="22/03/2020")
+                                    
+                                    column(1),
+                                    column(2,
+                                           selectInput("month.beg", "Beginning Month",
+                                                       c("Jan","Feb","Mar","Apr","May","Jun",
+                                                         "Jul","Aug","Sep","Oct","Nov","Dec"))
+                                           ),
+                                    column(2,
+                                           selectInput("day.beg","Beginning Day",c(1:31))
                                            ),
                                     column(2),
-                                    column(3,
-                                           textInput('end',label="End Date",value="22/03/2020")
+                                    column(2,
+                                           selectInput("month.end", "Ending Month",
+                                                       c("Jan","Feb","Mar","Apr","May","Jun",
+                                                         "Jul","Aug","Sep","Oct","Nov","Dec"))
+                                           ),
+                                    column(2,
+                                           selectInput("day.end","Ending Day",c(1:31))
                                     ),
+                                    
                                     column(1)
                                     
                                 ),
                                 
                                 fluidRow(
-                                    column(3),
-                                    column(3),
+                                    column(1),
+                                    column(2),
+                                    column(2),
                                     column(2,
                                            actionBttn("submit2", 
                                                       label = "Submit",
@@ -132,7 +149,8 @@ shinyUI(fluidPage(
                                                       style="simple",
                                                       color="primary",
                                                       size = "sm")),
-                                    column(3),
+                                    column(2),
+                                    column(2),
                                     column(1)
                                 ),
                                 

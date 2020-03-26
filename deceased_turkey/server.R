@@ -1,11 +1,18 @@
 
-load("/data/data.RData")
+#Debugging
+
+#options(shiny.error = browser) 
+#options(shiny.error = recover)
+
+load('/srv/shiny-server/deceased_turkey/data/data.Rdata')
+
+#load('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/data.Rdata')
+
 
 require(ggplot2)
 library(png)
 library(gridExtra)
 library(grid)
-library(magick)
 
 ##############################################################
 
@@ -28,17 +35,16 @@ shinyServer(function(input, output) {
     
     output$finalupdate <- renderText({
       # Read the final date from the data
-      finaldate = paste0("Final Update: ", "Mar 22, 2020")
+      finaldate = paste0("Last Update: ", "Mar 22, 2020")
     })
     
     
     ##############################################################################
     
-    values <- reactiveValues(df_data = data.frame(matrix(NA,nrow=11,ncol=2)),
-                             df_data2 = data.frame(matrix(NA,nrow=11,ncol=2)),
-                             df_data3 = data.frame(matrix(NA,nrow=11,ncol=2)),
-                             df_data4 = data.frame(matrix(NA,nrow=11,ncol=2))
+    values <- reactiveValues(sub  = NULL,
+                             sub2 = NULL
                              )
+    
     
     ##############################################################################
 
@@ -91,28 +97,28 @@ shinyServer(function(input, output) {
       }
       
       
-      if(input$konya==7){
+      if(input$konya==1){
         d[[7]] = data[which(data$Sehir==cities[7]),]
       } else {
         d[[7]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$malatya==8){
+      if(input$malatya==1){
         d[[8]] = data[which(data$Sehir==cities[8]),]
       } else {
         d[[8]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$sakarya==9){
+      if(input$sakarya==1){
         d[[9]] = data[which(data$Sehir==cities[9]),]
       } else {
         d[[9]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$tekirdag==10){
+      if(input$tekirdag==1){
         d[[10]] = data[which(data$Sehir==cities[10]),]
       } else {
         d[[10]] = matrix(NA,nrow=1,ncol=1)
@@ -134,40 +140,54 @@ shinyServer(function(input, output) {
         }
       }
       
+      values$sub <- subdata
       
-      dates = c(paste0(substring(input$date,1,6),2010:2019),input$date)
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      mm = which(M==input$month)
+      
+      
+      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+                        format="%d/%m/%Y")
+      
+      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+                        format="%d/%m/%Y")
+      
+      date <- seq.Date(date2,date1, by='years')
+      dates <- format(date,format="%d/%m/%Y")
+      
       
       sub = subdata[subdata$OlumTar%in%dates,]
-      
-      plotd = data.frame(matrix(NA,nrow=11,ncol=2))
-      
-      plotd[,1]=2010:2020
-      plotd[,2]= as.numeric(table(sub$OlumTar))
-      colnames(plotd) <- c("Year","Total")
-      
-      values$df_data = plotd
-      
-      
-      plotd2 = data.frame(matrix(NA,nrow=11,ncol=2))
-      plotd2[,1]=2010:2020
-      plotd2[,2]= as.numeric(table(sub[which(sub$Yasi>64),]$OlumTar))
-      colnames(plotd2) <- c("Year","Total")
-      values$df_data2 = plotd2
 
-      t <- rasterGrob(png::readPNG('/data/logo.png'),
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      plotd <- aggregate(count ~ year,data=sub,FUN=sum)
+      colnames(plotd) <- c("Year","Total")
+      plotd$Year <- as.numeric(plotd$Year)
+      
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
+      #                interpolate = TRUE)
+      
+      
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
                       interpolate = TRUE)
       
-      title.d <- format(as.Date(input$date,format="%d/%m/%Y"),"%b %d")
+      
+      title.d <- paste0(input$month," ",input$day)
+      tit <- paste0("Total Number of Deceased Individuals on ",title.d," (2010-2020)")
       
       p <- ggplot(plotd, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3,color=c(rep("black",10),"red"))+
+        geom_point(size=3)+
         geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals in TURKEY on ",title.d," (2010-2020)"))  +
-        scale_x_continuous(breaks=2010:2020)+
+        ggtitle(tit)  +
+        scale_x_continuous(breaks=plotd[,1])+
         scale_y_continuous(limits=c(0,max(plotd[,2]*1.5)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=2018, xmax=2020, 
+                          xmin=max(plotd[,1])-2, xmax=max(plotd[,1]), 
                           ymin=10, ymax=10) +
         annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
@@ -181,7 +201,30 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
    
     tab1 <- eventReactive(req(isTruthy(input$submit)), {
-      values$df_data
+      
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+                        format="%d/%m/%Y")
+      
+      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+                        format="%d/%m/%Y")
+      
+      date <- seq.Date(date2,date1, by='years')
+      dates <- format(date,format="%d/%m/%Y")
+      
+      sub = values$sub[values$sub$OlumTar%in%dates,]
+      
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      plotd <- aggregate(count ~ year,data=sub,FUN=sum)
+      colnames(plotd) <- c("Year","Total")
+      plotd$Year <- as.numeric(plotd$Year)
+      
+      plotd
     })
     
     output$table1 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
@@ -192,22 +235,48 @@ shinyServer(function(input, output) {
     
     myplot2 <- eventReactive(req(isTruthy(input$submit)),{
       
-      t <- rasterGrob(png::readPNG('/data/logo.png'),
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
+      #                interpolate = TRUE)
+      
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
                       interpolate = TRUE)
       
-      title.d <- format(as.Date(input$date,format="%d/%m/%Y"),"%b %d")
       
-      p <- ggplot(values$df_data2, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3,color=c(rep("black",10),"red"))+
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+                        format="%d/%m/%Y")
+      
+      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+                        format="%d/%m/%Y")
+      
+      date <- seq.Date(date2,date1, by='years')
+      dates <- format(date,format="%d/%m/%Y")
+      
+      sub = values$sub[values$sub$OlumTar%in%dates,]
+      
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      plotd2 <- aggregate(count ~ year,data=sub[which(sub$Yasi>64),],FUN=sum)
+      colnames(plotd2) <- c("Year","Total")
+      plotd2$Year <- as.numeric(plotd2$Year)
+      
+      title.d <- paste0(input$month," ",input$day)
+      tit = paste0("Total Number of Deceased Individuals on ",title.d," (2010-2020)")
+      
+      p <- ggplot(plotd2, aes(Year, Total)) + theme_bw()+
+        geom_point(size=3)+
         geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals (Age > 64) in TURKEY on ",title.d," (2010-2020)")) + 
-        scale_x_continuous(breaks=2010:2020)+
-        scale_y_continuous(limits=c(0,max(values$df_data2[,2]*1.5)))+
+        ggtitle(tit)+ 
+        scale_x_continuous(breaks=plotd2[,1])+
+        scale_y_continuous(limits=c(0,max(plotd2[,2]*1.5)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=2018, xmax=2020, 
+                          xmin=max(plotd2[,1])-2, xmax=max(plotd2[,1]),
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(values$df_data2[,2]*.1))+
+        annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd2[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
                plot.margin=margin(1,1,3,1))
       
@@ -220,7 +289,29 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab2 <- eventReactive(req(isTruthy(input$submit)), {
-      values$df_data2
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+                        format="%d/%m/%Y")
+      
+      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+                        format="%d/%m/%Y")
+      
+      date <- seq.Date(date2,date1, by='years')
+      dates <- format(date,format="%d/%m/%Y")
+      
+      sub = values$sub[values$sub$OlumTar%in%dates,]
+      
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      plotd2 <- aggregate(count ~ year,data=sub[which(sub$Yasi>64),],FUN=sum)
+      colnames(plotd2) <- c("Year","Total")
+      plotd2$Year <- as.numeric(plotd2$Year)
+      
+      plotd2
     })
     
     output$table2 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
@@ -278,28 +369,28 @@ shinyServer(function(input, output) {
       }
       
       
-      if(input$konya==7){
+      if(input$konya==1){
         d[[7]] = data[which(data$Sehir==cities[7]),]
       } else {
         d[[7]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$malatya==8){
+      if(input$malatya==1){
         d[[8]] = data[which(data$Sehir==cities[8]),]
       } else {
         d[[8]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$sakarya==9){
+      if(input$sakarya==1){
         d[[9]] = data[which(data$Sehir==cities[9]),]
       } else {
         d[[9]] = matrix(NA,nrow=1,ncol=1)
       }
       
       
-      if(input$tekirdag==10){
+      if(input$tekirdag==1){
         d[[10]] = data[which(data$Sehir==cities[10]),]
       } else {
         d[[10]] = matrix(NA,nrow=1,ncol=1)
@@ -322,8 +413,14 @@ shinyServer(function(input, output) {
       }
       
       
-      beg  <- as.Date(input$begin,format="%d/%m/%Y")
-      beg2 <- as.Date(input$end,format="%d/%m/%Y")
+      values$sub2 <- subdata
+      
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
+      
       date <- seq.Date(beg,beg2, by='days')
       date <- format(date,format="%d/%m/%Y")
       
@@ -333,42 +430,38 @@ shinyServer(function(input, output) {
                   c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
       }
       
+      
       sub = subdata[subdata$OlumTar%in%dates,]
       
       sub$day  <- substring(sub$OlumTar,1,5)
       sub$year <- substring(sub$OlumTar,7,11)
       sub$count <- 1
       
-      plotd <- aggregate(count ~ year,data=sub,FUN=sum)
-      colnames(plotd) <- c("Year","Total")
-      plotd$Year <- as.numeric(plotd$Year)
+      plotd3 <- aggregate(count ~ year,data=sub,FUN=sum)
+      colnames(plotd3) <- c("Year","Total")
+      plotd3$Year <- as.numeric(plotd3$Year)
       
-      values$df_data3 = plotd
-      
-      
-      sub2 <- sub[which(sub$Yasi>64),]
-      plotd2 <- aggregate(count ~ year,data=sub2,FUN=sum)
-      colnames(plotd2) <- c("Year","Total")
-      plotd2$Year <- as.numeric(plotd2$Year)
-      values$df_data4 = plotd2
-      
-      t <- rasterGrob(png::readPNG('/data/logo.png'),
+       t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
                       interpolate = TRUE)
+                      
+                      
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
+      #                interpolate = TRUE)
       
-      title.d <- paste0(format(as.Date(input$begin,format="%d/%m/%Y"),"%b %d")," and ",
-                        format(as.Date(input$end,format="%d/%m/%Y"),"%b %d"))
+      title.d <- paste0(input$month.beg," ",input$day.beg," and ",
+                        input$month.end," ",input$day.end)
       
-      p <- ggplot(values$df_data3, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3,color=c(rep("black",10),"red"))+
+      p <- ggplot(plotd3, aes(Year, Total)) + theme_bw()+
+        geom_point(size=3)+
         geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals in TURKEY between ",title.d," (2010-2020)"))  +
-        scale_x_continuous(breaks=2010:2020)+
-        scale_y_continuous(limits=c(0,max(values$df_data3[,2]*1.2)))+
+        ggtitle(paste0("Total Number of Deceased Individuals between ",title.d," (2010-2020)"))  +
+        scale_x_continuous(breaks=plotd3[,1])+
+        scale_y_continuous(limits=c(0,max(plotd3[,2]*1.2)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=2018, xmax=2020, 
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(values$df_data3[,2]*.1))+
+        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd3[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -381,7 +474,32 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab3 <- eventReactive(req(isTruthy(input$submit2)), {
-      values$df_data3
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
+      
+      date <- seq.Date(beg,beg2, by='days')
+      date <- format(date,format="%d/%m/%Y")
+      
+      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
+      for(i in 2:length(date)){
+        dates = c(dates,
+                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
+      }
+      
+      sub = values$sub2[values$sub2$OlumTar%in%dates,]
+      
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      plotd3 <- aggregate(count ~ year,data=sub,FUN=sum)
+      colnames(plotd3) <- c("Year","Total")
+      plotd3$Year <- as.numeric(plotd3$Year)
+      
+      plotd3
     })
     
     output$table3 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
@@ -392,23 +510,52 @@ shinyServer(function(input, output) {
 
     myplot4 <- eventReactive(req(isTruthy(input$submit2)),{
       
-      t <- rasterGrob(png::readPNG('/data/logo.png'),
-                      interpolate = TRUE)
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
-      title.d <- paste0(format(as.Date(input$begin,format="%d/%m/%Y"),"%b %d")," and ",
-                        format(as.Date(input$end,format="%d/%m/%Y"),"%b %d"))
+      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
       
-      p <- ggplot(values$df_data4, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3,color=c(rep("black",10),"red"))+
+      date <- seq.Date(beg,beg2, by='days')
+      date <- format(date,format="%d/%m/%Y")
+      
+      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
+      for(i in 2:length(date)){
+        dates = c(dates,
+                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
+      }
+      
+      
+      sub = values$sub2[values$sub2$OlumTar%in%dates,]
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      sub2 <- sub[which(sub$Yasi>64),]
+      
+      plotd4 <- aggregate(count ~ year,data=sub2,FUN=sum)
+      colnames(plotd4) <- c("Year","Total")
+      plotd4$Year <- as.numeric(plotd4$Year)
+      
+      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),
+                       interpolate = TRUE)
+     
+     # t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),
+     #                  interpolate = TRUE)
+      
+      title.d <- paste0(input$month.beg," ",input$day.beg," and ",
+                        input$month.end," ",input$day.end)
+      
+      p <- ggplot(plotd4, aes(Year, Total)) + theme_bw()+
+        geom_point(size=3)+
         geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals (Age > 64) in TURKEY between ",title.d," (2010-2020)"))  +
-        scale_x_continuous(breaks=2010:2020)+
-        scale_y_continuous(limits=c(0,max(values$df_data4[,2]*1.2)))+
+        ggtitle(paste0("Total Number of Deceased Individuals (Age > 64) between ",title.d," (2010-2020)"))  +
+        scale_x_continuous(breaks=plotd4[,1])+
+        scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=2018, xmax=2020, 
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(values$df_data4[,2]*.1))+
+        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -420,7 +567,33 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab4 <- eventReactive(req(isTruthy(input$submit2)), {
-      values$df_data4
+      
+      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+      
+      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
+      
+      date <- seq.Date(beg,beg2, by='days')
+      date <- format(date,format="%d/%m/%Y")
+      
+      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
+      for(i in 2:length(date)){
+        dates = c(dates,
+                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
+      }
+      
+      sub = values$sub2[values$sub2$OlumTar%in%dates,]
+      sub$day  <- substring(sub$OlumTar,1,5)
+      sub$year <- substring(sub$OlumTar,7,11)
+      sub$count <- 1
+      
+      sub2 <- sub[which(sub$Yasi>64),]
+      
+      plotd4 <- aggregate(count ~ year,data=sub2,FUN=sum)
+      colnames(plotd4) <- c("Year","Total")
+      plotd4$Year <- as.numeric(plotd4$Year)
+      
+      plotd4
     })
     
     output$table4 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
