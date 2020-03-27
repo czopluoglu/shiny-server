@@ -14,13 +14,13 @@ shinyUI(fluidPage(
         column(2,
                
             br(),
-            br(),
             tags$h5("The numbers reported on this page include 
                     the following major cities in which the data are available on
                     www.turkey.gov.tr:"),
             h5("- Bursa"),
             h5("- Denizli"),
             h5("- Diyarbakir"),
+            h5("- Erzurum"),
             h5("- Istanbul"),
             h5("- Kahramanmaras"),
             h5("- Kocaeli"),
@@ -28,14 +28,18 @@ shinyUI(fluidPage(
             h5("- Malatya"),
             h5("- Sakarya"),
             h5("- Tekirdag"),
-            br(),
             hr(),
-            
+            br(),
             uiOutput("info3"),
             
-            h5("You can compare the number of deceased individuals for any given day
-            in 2020 to the number of deceased individuals in the past 10 years
-            on the same day."),
+            h5("You can compare the number of deceased individuals for any given 
+            day or date range in 2020 to the number of deceased individuals 
+            in the past 10 years on the same day or same date range."),
+            br(),
+            
+            h5("Due to the lag in reporting numbers from the original
+               source, the numbers are automatically updated
+               on a daily basis for the prior 45 days."),
             br(),
             hr(),
             textOutput("finalupdate"),

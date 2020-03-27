@@ -10,8 +10,9 @@ a7 = read.csv("konya.csv",header=TRUE)
 a8 = read.csv("malatya.csv",header=TRUE)
 a9 = read.csv("sakarya.csv",header=TRUE)
 a10 = read.csv("tekirdag.csv",header=TRUE)
+a11 = read.csv("erzurum.csv",header=TRUE)
 
-data <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
+data <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11)
 
   names(table(data$Yasi))
 
@@ -36,7 +37,7 @@ data <- rbind(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
   data$Sehir <- as.character(data$Sehir)
   
   
-  rm("a1","a2","a3","a4","a5","a6","a7","a8","a9","a10")
+  rm("a1","a2","a3","a4","a5","a6","a7","a8","a9","a10","a11")
   
   save.image("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/data.Rdata")
   
