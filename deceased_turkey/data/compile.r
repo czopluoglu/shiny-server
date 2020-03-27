@@ -24,9 +24,10 @@ remDr$open()
 
 website= 'https://www.turkiye.gov.tr'
 cities = c('bursa','denizli','diyarbakir','istanbul','kahramanmaras',
-          'kocaeli','konya','malatya','sakarya','tekirdag')
+          'kocaeli','konya','malatya','sakarya','tekirdag',
+          'antalya','erzurum')
 
-dates <- seq.Date(Sys.Date() - 3735,Sys.Date()-1, by='days')
+dates <- seq.Date(Sys.Date() - 3737,Sys.Date()-1, by='days')
 dates <- dates[1:(length(dates)-1)]
 
 
