@@ -4,9 +4,12 @@
 #options(shiny.error = browser) 
 #options(shiny.error = recover)
 
-load('/srv/shiny-server/deceased_turkey/data/data.Rdata')
+#setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
+setwd("F:/shiny-server/deceased_turkey/data/")
+#setwd("/srv/shiny-server/deceased_turkey/data/")
 
-#load('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/data.Rdata')
+
+load('data.Rdata')
 
 
 require(ggplot2)
@@ -68,7 +71,7 @@ shinyServer(function(input, output) {
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       
       title.d <- paste0(input$month," ",input$day)
@@ -132,7 +135,7 @@ shinyServer(function(input, output) {
       
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
@@ -240,7 +243,7 @@ shinyServer(function(input, output) {
       colnames(plotd3) <- c("Year","Total")
       plotd3$Year <- as.numeric(plotd3$Year)
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
@@ -331,7 +334,7 @@ shinyServer(function(input, output) {
       colnames(plotd4) <- c("Year","Total")
       plotd4$Year      <- as.numeric(plotd4$Year)
       
-      t <- rasterGrob(png::readPNG('/srv/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
      
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
