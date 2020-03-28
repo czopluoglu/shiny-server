@@ -70,7 +70,7 @@ shinyUI(fluidPage(
                                            selectInput("day", "Day",c(1:31))
                                     ),
                                     column(3,
-                                           selectInput("sehir", "Sehir",
+                                           selectInput("sehir", "City",
                                                        c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
                                                            'kocaeli','konya','malatya','sakarya','tekirdag','erzurum'))
                                            ),
@@ -135,7 +135,7 @@ shinyUI(fluidPage(
                                            selectInput("day.beg","Beginning Day",c(1:31))
                                            ),
                                     column(2,
-                                           selectInput("sehir2", "Sehir",
+                                           selectInput("sehir2", "City",
                                                        c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
                                                          'kocaeli','konya','malatya','sakarya','tekirdag','erzurum'))
                                     ),

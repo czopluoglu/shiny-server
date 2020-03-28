@@ -7,12 +7,8 @@ setwd("/srv/shiny-server/deceased_turkey/data/")
 library(RSelenium)
 library(rvest)
 library(xml2)
-require(rstudioapi)
 
 system('docker run -d -p 4445:4444 selenium/standalone-chrome')
-
-#termId <- rstudioapi::terminalExecute("docker run -d -p 4445:4444 selenium/standalone-chrome")
-#rstudioapi::terminalKill(termId)
 
 load('data.Rdata')
 
