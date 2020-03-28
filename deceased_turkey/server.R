@@ -8,9 +8,9 @@
 setwd("F:/shiny-server/deceased_turkey/data/")
 #setwd("/srv/shiny-server/deceased_turkey/data/")
 
-
 load('data.Rdata')
 
+data2 <- data
 
 require(ggplot2)
 library(png)
@@ -38,13 +38,18 @@ shinyServer(function(input, output) {
     
     output$finalupdate <- renderText({
       # Read the final date from the data
-      finaldate = paste0("Last Update: ", "Mar 22, 2020")
+      finaldate = paste0("Last Update: ", format(Sys.Date(),"%B %d,%Y"))
     })
-    
     
     ##############################################################################
 
     myplot <- eventReactive(req(isTruthy(input$submit)),{
+      
+      if(input$sehir!='all cities'){
+        
+        data <- data[which(data$Sehir==input$sehir),]
+        
+      }
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -69,9 +74,7 @@ shinyServer(function(input, output) {
       plotd$Year <- as.numeric(plotd$Year)
       
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
-      
-      
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       
       title.d <- paste0(input$month," ",input$day)
@@ -87,7 +90,7 @@ shinyServer(function(input, output) {
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=max(plotd[,1])-2, xmax=max(plotd[,1]), 
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd[,2]*.1))+
+        #annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -99,6 +102,12 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
    
     tab1 <- eventReactive(req(isTruthy(input$submit)), {
+      
+      if(input$sehir!='all cities'){
+        
+        data <- data[which(data$Sehir==input$sehir),]
+        
+      }
 
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -133,9 +142,14 @@ shinyServer(function(input, output) {
     
     myplot2 <- eventReactive(req(isTruthy(input$submit)),{
       
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      if(input$sehir!='all cities'){
+        
+        data <- data[which(data$Sehir==input$sehir),]
+        
+      }
       
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
+      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
@@ -172,7 +186,7 @@ shinyServer(function(input, output) {
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=max(plotd2[,1])-2, xmax=max(plotd2[,1]),
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd2[,2]*.1))+
+       # annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd2[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
                plot.margin=margin(1,1,3,1))
       
@@ -185,6 +199,12 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab2 <- eventReactive(req(isTruthy(input$submit)), {
+      
+      if(input$sehir!='all cities'){
+        
+        data <- data[which(data$Sehir==input$sehir),]
+        
+      }
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -218,6 +238,12 @@ shinyServer(function(input, output) {
     
     myplot3 <- eventReactive(req(isTruthy(input$submit2)),{
       
+      if(input$sehir2!='all cities'){
+        
+        data2 <- data2[which(data2$Sehir==input$sehir2),]
+        
+      }
+      
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
       beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
@@ -233,7 +259,7 @@ shinyServer(function(input, output) {
       }
       
       
-      sub3 = data[data$OlumTar%in%dates,]
+      sub3 = data2[data2$OlumTar%in%dates,]
       
       sub3$day  <- substring(sub3$OlumTar,1,5)
       sub3$year <- substring(sub3$OlumTar,7,11)
@@ -243,8 +269,7 @@ shinyServer(function(input, output) {
       colnames(plotd3) <- c("Year","Total")
       plotd3$Year <- as.numeric(plotd3$Year)
       
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-      
+      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
@@ -260,7 +285,7 @@ shinyServer(function(input, output) {
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=max(plotd3[,1])-2, xmax=max(plotd3[,1]), 
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd3[,2]*.1))+
+        #annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd3[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -273,6 +298,12 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab3 <- eventReactive(req(isTruthy(input$submit2)), {
+      
+      if(input$sehir2!='all cities'){
+        
+        data2 <- data2[which(data2$Sehir==input$sehir2),]
+        
+      }
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -289,7 +320,7 @@ shinyServer(function(input, output) {
       }
       
       
-      sub3 = data[data$OlumTar%in%dates,]
+      sub3 = data2[data2$OlumTar%in%dates,]
       
       sub3$day  <- substring(sub3$OlumTar,1,5)
       sub3$year <- substring(sub3$OlumTar,7,11)
@@ -310,6 +341,12 @@ shinyServer(function(input, output) {
 
     myplot4 <- eventReactive(req(isTruthy(input$submit2)),{
       
+      if(input$sehir2!='all cities'){
+        
+        data2 <- data2[which(data2$Sehir==input$sehir2),]
+        
+      }
+      
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
       beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
@@ -325,7 +362,7 @@ shinyServer(function(input, output) {
       }
       
       
-      sub4 = data[data$OlumTar%in%dates,]
+      sub4 = data2[data2$OlumTar%in%dates,]
       sub4$day  <- substring(sub4$OlumTar,1,5)
       sub4$year <- substring(sub4$OlumTar,7,11)
       sub4$count <- 1
@@ -334,8 +371,7 @@ shinyServer(function(input, output) {
       colnames(plotd4) <- c("Year","Total")
       plotd4$Year      <- as.numeric(plotd4$Year)
       
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-     
+      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
       
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
@@ -351,7 +387,7 @@ shinyServer(function(input, output) {
         annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
                           xmin=max(plotd4[,1])-2, xmax=max(plotd4[,1]), 
                           ymin=10, ymax=10) +
-        annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
+       # annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -363,6 +399,12 @@ shinyServer(function(input, output) {
     },height = 450, width = 700)
     
     tab4 <- eventReactive(req(isTruthy(input$submit2)), {
+      
+      if(input$sehir2!='all cities'){
+        
+        data2 <- data2[which(data2$Sehir==input$sehir2),]
+        
+      }
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -379,7 +421,7 @@ shinyServer(function(input, output) {
       }
       
       
-      sub4 = data[data$OlumTar%in%dates,]
+      sub4 = data2[data2$OlumTar%in%dates,]
       sub4$day  <- substring(sub4$OlumTar,1,5)
       sub4$year <- substring(sub4$OlumTar,7,11)
       sub4$count <- 1

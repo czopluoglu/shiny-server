@@ -60,15 +60,20 @@ shinyUI(fluidPage(
                                 br(),
                                 
                                 fluidRow(
-                                    column(2),
-                                    column(4,
+                                    column(1),
+                                    column(3,
                                            selectInput("month", "Month",
                                                        c("Jan","Feb","Mar","Apr","May","Jun",
                                                          "Jul","Aug","Sep","Oct","Nov","Dec"))
                                     ),
-                                    column(4,
+                                    column(3,
                                            selectInput("day", "Day",c(1:31))
                                     ),
+                                    column(3,
+                                           selectInput("sehir", "Sehir",
+                                                       c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
+                                                           'kocaeli','konya','malatya','sakarya','tekirdag','erzurum'))
+                                           ),
                                     column(2)
                                     ),
                             
@@ -129,7 +134,11 @@ shinyUI(fluidPage(
                                     column(2,
                                            selectInput("day.beg","Beginning Day",c(1:31))
                                            ),
-                                    column(2),
+                                    column(2,
+                                           selectInput("sehir2", "Sehir",
+                                                       c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
+                                                         'kocaeli','konya','malatya','sakarya','tekirdag','erzurum'))
+                                    ),
                                     column(2,
                                            selectInput("month.end", "Ending Month",
                                                        c("Jan","Feb","Mar","Apr","May","Jun",

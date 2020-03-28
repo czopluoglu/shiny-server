@@ -1,28 +1,27 @@
+#setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
+#setwd("F:/shiny-server/deceased_turkey/data/")
 
+setwd("/srv/shiny-server/deceased_turkey/data/")
+
+####################################################
 library(RSelenium)
 library(rvest)
 library(xml2)
 require(rstudioapi)
 
+system('docker run -d -p 4445:4444 selenium/standalone-chrome')
 
-termId <- rstudioapi::terminalExecute("docker run -d -p 4445:4444 selenium/standalone-chrome")
-rstudioapi::terminalKill(termId)
+#termId <- rstudioapi::terminalExecute("docker run -d -p 4445:4444 selenium/standalone-chrome")
+#rstudioapi::terminalKill(termId)
 
 load('data.Rdata')
 
-#######################################
+##############################################################################
 
 dates  <- as.Date(data$OlumTar,format="%d/%m/%Y")
 
-date.range <- seq(from=max(dates)-45,to=max(dates)+1,by='days')
-
-
-
-# docker ps 
-# you should get a table of information if it is successful
-####################################################################################
-
-
+dates <- seq(from=max(dates)-45,to=Sys.Date()-1,by='days')
+dates <- format(dates,format="%d/%m/%Y")
 
 ####################################################################################
 
@@ -34,12 +33,11 @@ remDr$open()
 
 website= 'https://www.turkiye.gov.tr'
 cities = c('bursa','denizli','diyarbakir','istanbul','kahramanmaras',
-           'kocaeli','konya','malatya','sakarya','tekirdag',
-           'antalya','erzurum')
+           'kocaeli','konya','malatya','sakarya','tekirdag','erzurum')
 
-dates <- seq.Date(Sys.Date() - 3737,Sys.Date()-1, by='days')
-dates <- dates[1:(length(dates)-1)]
 
+
+city <- vector('list')
 
 for(i in 1:length(cities)){
   
@@ -92,6 +90,53 @@ for(i in 1:length(cities)){
     }
   }
   
-  write.csv(tab,paste0(cities[i],".csv"),row.names=FALSE)
-  
+  city[[i]] = tab
+
 } 
+
+
+replace <- city[[1]]
+
+for(i in 2:length(city)){
+  
+  replace <- rbind(replace,city[[i]])
+  
+}
+
+####################################################################################
+
+
+data2 = data[!data$OlumTar%in%dates,]
+
+data2 <- rbind(data2,replace)
+
+rm(list=setdiff(ls(), "data2")) 
+
+data = data2
+rm('data2')
+
+
+save.image("F:/shiny-server/deceased_turkey/data/data.RData")
+
+####################################################################################
+
+#install.packages("git2r")
+#library(git2r)
+
+# Insure you have navigated to a directory with a git repo.
+#dir <- "mypath"
+#setwd(dir)
+
+# Configure git.
+#git2r::config(user.name = "myusername",user.email = "myemail")
+
+# Check git status.
+#gitstatus()
+
+# Add and commit changes. 
+#gitadd()
+#gitcommit()
+
+# Push changes to github.
+#gitpush()
+
