@@ -116,7 +116,7 @@ data = data2
 rm('data2')
 
 
-save.image("F:/shiny-server/deceased_turkey/data/data.RData")
+save.image("data.Rdata")
 
 ####################################################################################
 
