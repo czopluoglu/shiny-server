@@ -61,20 +61,25 @@ shinyUI(fluidPage(
                                 
                                 fluidRow(
                                     column(1),
-                                    column(3,
+                                    column(2,
                                            selectInput("month", "Month",
                                                        c("Jan","Feb","Mar","Apr","May","Jun",
                                                          "Jul","Aug","Sep","Oct","Nov","Dec"))
                                     ),
-                                    column(3,
+                                    column(2,
                                            selectInput("day", "Day",c(1:31))
                                     ),
+                                    
+                                    column(2,
+                                           selectInput('year1','Starting Year',c(2010:2019))
+                                           ),
+                                    
                                     column(3,
                                            selectInput("sehir", "City",
                                                        c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
                                                            'kocaeli','konya','malatya','sakarya','tekirdag','erzurum'))
-                                           ),
-                                    column(2)
+                                           )
+                                    
                                     ),
                             
                                 fluidRow(
@@ -125,7 +130,6 @@ shinyUI(fluidPage(
                                 
                                 fluidRow(
                                     
-                                    column(1),
                                     column(2,
                                            selectInput("month.beg", "Beginning Month",
                                                        c("Jan","Feb","Mar","Apr","May","Jun",
@@ -134,6 +138,9 @@ shinyUI(fluidPage(
                                     column(2,
                                            selectInput("day.beg","Beginning Day",c(1:31))
                                            ),
+                                    column(2,
+                                           selectInput("year2","Starting Year",c(2010:2019))
+                                    ),
                                     column(2,
                                            selectInput("sehir2", "City",
                                                        c('all cities','bursa','denizli','diyarbakir','istanbul','kahramanmaras',
@@ -147,8 +154,7 @@ shinyUI(fluidPage(
                                     column(2,
                                            selectInput("day.end","Ending Day",c(1:31))
                                     ),
-                                    
-                                    column(1)
+                                
                                     
                                 ),
                                 
@@ -163,8 +169,7 @@ shinyUI(fluidPage(
                                                       style="simple",
                                                       color="primary",
                                                       size = "sm")),
-                                    column(2),
-                                    column(2),
+                                    column(4),
                                     column(1)
                                 ),
                                 

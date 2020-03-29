@@ -1,13 +1,26 @@
 
+#input <- vector("list")
+
+#input$day <- 25
+#input$month <- 'Mar'
+#input$day.beg <- 21
+#input$month.beg <- 'Mar'
+#input$day.end <- 27
+#input$month.end <- 'Mar'
+#input$sehir <- 'istanbul'
+#input$sehir2 <- 'kocaeli'
+#input$year1 = 2015
+#input$year2 = 2015
+
 #Debugging
 
 #options(shiny.error = browser) 
 #options(shiny.error = recover)
 
-#setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
+setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
 #setwd("F:/shiny-server/deceased_turkey/data/")
 
-setwd("/srv/shiny-server/deceased_turkey/data/")
+#setwd("/srv/shiny-server/deceased_turkey/data/")
 
 load('data.Rdata')
 
@@ -42,6 +55,12 @@ shinyServer(function(input, output) {
       finaldate = paste0("Last Update: ", format(Sys.Date(),"%B %d,%Y"))
     })
     
+    ##########################################################################3
+    values <- reactiveValues(plot1 = NULL,
+                             plot2 = NULL,
+                             plot3 = NULL,
+                             plot4 = NULL)
+    
     ##############################################################################
 
     myplot <- eventReactive(req(isTruthy(input$submit)),{
@@ -49,8 +68,12 @@ shinyServer(function(input, output) {
       if(input$sehir!='all cities'){
         
         data <- data[which(data$Sehir==input$sehir),]
-        
       }
+      
+      data$y <- substring(data$OlumTar,7,11)
+      
+      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -74,28 +97,33 @@ shinyServer(function(input, output) {
       colnames(plotd) <- c("Year","Total")
       plotd$Year <- as.numeric(plotd$Year)
       
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
-      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-      
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
       
       title.d <- paste0(input$month," ",input$day)
-      tit <- paste0("Total Number of Deceased Individuals on ",title.d," (2010-2020)")
+      ek1     <- paste0(" in ",toupper(input$sehir))
+      ek2     <- paste0(" (",input$year1,"-2020)")
       
-      p <- ggplot(plotd, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3)+
-        geom_smooth(method = "loess")+
-        xlab("Year")+ylab("Total")+
-        ggtitle(tit)  +
-        scale_x_continuous(breaks=plotd[,1])+
-        scale_y_continuous(limits=c(0,max(plotd[,2]*1.5)))+
-        annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=max(plotd[,1])-2, xmax=max(plotd[,1]), 
-                          ymin=10, ymax=10) +
-        #annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd[,2]*.1))+
-        theme(plot.title = element_text(lineheight=.8, face="bold"),
-              plot.margin=margin(1,1,3,1))
+      tit <- paste0("Total Number of Deceased Individuals on ",title.d)
+      if(input$sehir!='all cities') { tit = paste0(tit,ek1)}
+      tit = paste0(tit,ek2)
       
-      p
+      values$plot1 <- tit
+      
+      ggplot(plotd, aes(Year, Total)) + theme_bw()+
+           geom_point(size=3)+
+           geom_line(lty=2,col="gray")+  #geom_smooth(method = "loess")+
+           xlab("Year")+ylab("Total")+
+           ggtitle(tit)  +
+           scale_x_continuous(breaks=plotd[,1])+
+           scale_y_continuous(limits=c(0,max(plotd[,2]*1.5)))+
+           annotate('text',x=max(plotd[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+           annotation_custom(t, 
+                             xmin = min(plotd[,1])-.2, xmax = min(plotd[,1])+(max(plotd[,1])-min(plotd[,1]))*.25-.2, 
+                             ymin =0, ymax =max(plotd[,2]*.1))+
+           theme(plot.title = element_text(lineheight=.8, face="bold"),
+                 plot.margin=margin(1,1,3,1))
+      
+      
     })
     
     output$plot <- renderPlot({
@@ -104,12 +132,17 @@ shinyServer(function(input, output) {
    
     tab1 <- eventReactive(req(isTruthy(input$submit)), {
       
+      
       if(input$sehir!='all cities'){
         
         data <- data[which(data$Sehir==input$sehir),]
-        
       }
-
+      
+      data$y <- substring(data$OlumTar,7,11)
+      
+      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+      
+      
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
       date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
@@ -143,16 +176,16 @@ shinyServer(function(input, output) {
     
     myplot2 <- eventReactive(req(isTruthy(input$submit)),{
       
+      
       if(input$sehir!='all cities'){
         
         data <- data[which(data$Sehir==input$sehir),]
-        
       }
       
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
-      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+      data$y <- substring(data$OlumTar,7,11)
       
-      
+      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
       date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
@@ -175,23 +208,33 @@ shinyServer(function(input, output) {
       plotd2$Year <- as.numeric(plotd2$Year)
       
       title.d <- paste0(input$month," ",input$day)
-      tit = paste0("Total Number of Deceased Individuals on ",title.d," (2010-2020)")
+      ek1     <- paste0(" in ",toupper(input$sehir))
+      ek2     <- paste0(" (",input$year1,"-2020)")
       
-      p <- ggplot(plotd2, aes(Year, Total)) + theme_bw()+
+      tit <- paste0("Total Number of Deceased Individuals (Age>64) on ",title.d)
+      if(input$sehir!='all cities') { tit = paste0(tit,ek1)}
+      tit = paste0(tit,ek2)
+      
+      values$plot2 <- tit
+      
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+      
+      
+      ggplot(plotd2, aes(Year, Total)) + theme_bw()+
         geom_point(size=3)+
-        geom_smooth(method = "loess")+
+        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
         ggtitle(tit)+ 
         scale_x_continuous(breaks=plotd2[,1])+
         scale_y_continuous(limits=c(0,max(plotd2[,2]*1.5)))+
-        annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=max(plotd2[,1])-2, xmax=max(plotd2[,1]),
-                          ymin=10, ymax=10) +
-       # annotation_custom(t, xmin = 2010, xmax = 2013, ymin =0, ymax =max(plotd2[,2]*.1))+
+        annotate('text',x=max(plotd2[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+        annotation_custom(t, 
+                          xmin = min(plotd2[,1])-.2, 
+                          xmax = min(plotd2[,1])+(max(plotd2[,1])-min(plotd2[,1]))*.25-.2, 
+                          ymin =0, ymax = max(plotd2[,2])*.1) +
         theme(plot.title = element_text(lineheight=.8, face="bold"),
                plot.margin=margin(1,1,3,1))
       
-      p
     })
     
 
@@ -201,11 +244,16 @@ shinyServer(function(input, output) {
     
     tab2 <- eventReactive(req(isTruthy(input$submit)), {
       
+      
       if(input$sehir!='all cities'){
         
         data <- data[which(data$Sehir==input$sehir),]
-        
       }
+      
+      data$y <- substring(data$OlumTar,7,11)
+      
+      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -238,12 +286,16 @@ shinyServer(function(input, output) {
     #################################################################################
     
     myplot3 <- eventReactive(req(isTruthy(input$submit2)),{
-      
+  
       if(input$sehir2!='all cities'){
         
         data2 <- data2[which(data2$Sehir==input$sehir2),]
-        
       }
+      
+      data2$y <- substring(data2$OlumTar,7,11)
+      
+      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
+      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -270,27 +322,34 @@ shinyServer(function(input, output) {
       colnames(plotd3) <- c("Year","Total")
       plotd3$Year <- as.numeric(plotd3$Year)
       
-      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
-      
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
                         input$month.end," ",input$day.end)
+      ek1     <- paste0(" in ",toupper(input$sehir2))
+      ek2     <- paste0(" (",input$year2,"-2020)")
+      tit <- paste0("Total Number of Deceased Individuals between ",title.d)
+      if(input$sehir2!='all cities') { tit = paste0(tit,ek1)}
+      tit = paste0(tit,ek2)
       
-      p <- ggplot(plotd3, aes(Year, Total)) + theme_bw()+
+      values$plot3 <- tit
+      
+      ggplot(plotd3, aes(Year, Total)) + theme_bw()+
         geom_point(size=3)+
-        geom_smooth(method = "loess")+
+        geom_line(lty=2,col='gray') +  # geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals between ",title.d," (2010-2020)"))  +
+        ggtitle(tit)  +
         scale_x_continuous(breaks=plotd3[,1])+
         scale_y_continuous(limits=c(0,max(plotd3[,2]*1.2)))+
-        annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=max(plotd3[,1])-2, xmax=max(plotd3[,1]), 
-                          ymin=10, ymax=10) +
-        #annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd3[,2]*.1))+
+        annotate('text',x=max(plotd3[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+        annotation_custom(t, 
+                          xmin = min(plotd3[,1])-.2, xmax = min(plotd3[,1])+(max(plotd3[,1])-min(plotd3[,1]))*.25-.2, 
+                          ymin =0, ymax = max(plotd3[,2])*.1)+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
-      p
+      
+      
     })
     
     
@@ -303,8 +362,12 @@ shinyServer(function(input, output) {
       if(input$sehir2!='all cities'){
         
         data2 <- data2[which(data2$Sehir==input$sehir2),]
-        
       }
+      
+      data2$y <- substring(data2$OlumTar,7,11)
+      
+      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
+      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -345,8 +408,10 @@ shinyServer(function(input, output) {
       if(input$sehir2!='all cities'){
         
         data2 <- data2[which(data2$Sehir==input$sehir2),]
-        
       }
+      
+      data2$y <- substring(data2$OlumTar,7,11)
+      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
@@ -372,27 +437,34 @@ shinyServer(function(input, output) {
       colnames(plotd4) <- c("Year","Total")
       plotd4$Year      <- as.numeric(plotd4$Year)
       
-      #t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-      #t <- rasterGrob(png::readPNG('C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data/logo.png'),interpolate = TRUE)
-      
+      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+    
       title.d <- paste0(input$month.beg," ",input$day.beg," and ",
                         input$month.end," ",input$day.end)
       
-      p <- ggplot(plotd4, aes(Year, Total)) + theme_bw()+
+      ek1     <- paste0(" in ",toupper(input$sehir2))
+      ek2     <- paste0(" (",input$year2,"-2020)")
+      tit <- paste0("Total Number of Deceased Individuals (Age>64) between ",title.d)
+      if(input$sehir2!='all cities') { tit = paste0(tit,ek1)}
+      tit = paste0(tit,ek2)
+      
+      values$plot4 <- tit
+      
+      ggplot(plotd4, aes(Year, Total)) + theme_bw()+
         geom_point(size=3)+
-        geom_smooth(method = "loess")+
+        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
         xlab("Year")+ylab("Total")+
-        ggtitle(paste0("Total Number of Deceased Individuals (Age > 64) between ",title.d," (2010-2020)"))  +
+        ggtitle(tit)  +
         scale_x_continuous(breaks=plotd4[,1])+
         scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
-        annotation_custom(textGrob("Source: www.turkiye.gov.tr", gp=gpar(col="black")), 
-                          xmin=max(plotd4[,1])-2, xmax=max(plotd4[,1]), 
-                          ymin=10, ymax=10) +
-       # annotation_custom(t, xmin = 2009.5, xmax = 2012, ymin =0, ymax =max(plotd4[,2]*.1))+
+        annotate('text',x=max(plotd4[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+        annotation_custom(t, 
+                          xmin = min(plotd4[,1])-.2, xmax = min(plotd4[,1])+(max(plotd4[,1])-min(plotd4[,1]))*.25-.2, 
+                          ymin =0, ymax = max(plotd4[,2])*.1)+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
-      p
+      
     })
     
     output$plot4 <- renderPlot({
@@ -404,8 +476,12 @@ shinyServer(function(input, output) {
       if(input$sehir2!='all cities'){
         
         data2 <- data2[which(data2$Sehir==input$sehir2),]
-        
       }
+      
+      data2$y <- substring(data2$OlumTar,7,11)
+      
+      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
+      
       
       M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
       
