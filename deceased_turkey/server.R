@@ -119,7 +119,7 @@ shinyServer(function(input, output) {
            annotate('text',x=max(plotd[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
            annotation_custom(t, 
                              xmin = min(plotd[,1])-.2, xmax = min(plotd[,1])+(max(plotd[,1])-min(plotd[,1]))*.25-.2, 
-                             ymin =0, ymax =max(plotd[,2]*.1))+
+                             ymin =0, ymax =max(plotd[,2]*.3))+
            theme(plot.title = element_text(lineheight=.8, face="bold"),
                  plot.margin=margin(1,1,3,1))
       
@@ -231,7 +231,7 @@ shinyServer(function(input, output) {
         annotation_custom(t, 
                           xmin = min(plotd2[,1])-.2, 
                           xmax = min(plotd2[,1])+(max(plotd2[,1])-min(plotd2[,1]))*.25-.2, 
-                          ymin =0, ymax = max(plotd2[,2])*.1) +
+                          ymin =0, ymax = max(plotd2[,2])*.3) +
         theme(plot.title = element_text(lineheight=.8, face="bold"),
                plot.margin=margin(1,1,3,1))
       
@@ -344,7 +344,7 @@ shinyServer(function(input, output) {
         annotate('text',x=max(plotd3[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
         annotation_custom(t, 
                           xmin = min(plotd3[,1])-.2, xmax = min(plotd3[,1])+(max(plotd3[,1])-min(plotd3[,1]))*.25-.2, 
-                          ymin =0, ymax = max(plotd3[,2])*.1)+
+                          ymin =0, ymax = max(plotd3[,2])*.3)+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       
@@ -460,7 +460,7 @@ shinyServer(function(input, output) {
         annotate('text',x=max(plotd4[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
         annotation_custom(t, 
                           xmin = min(plotd4[,1])-.2, xmax = min(plotd4[,1])+(max(plotd4[,1])-min(plotd4[,1]))*.25-.2, 
-                          ymin =0, ymax = max(plotd4[,2])*.1)+
+                          ymin =0, ymax = max(plotd4[,2])*.3)+
         theme(plot.title = element_text(lineheight=.8, face="bold"),
               plot.margin=margin(1,1,3,1))
       

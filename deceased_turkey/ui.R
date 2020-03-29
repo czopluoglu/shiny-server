@@ -8,6 +8,9 @@ library(shinyWidgets)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
 
+    
+    tags$head(includeHTML(("/srv/shiny-server/deceased_turkey/google-analytics.html"))),
+    
     titlePanel(""),
 
     fluidRow(
