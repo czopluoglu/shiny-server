@@ -1,22 +1,30 @@
 #setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
 #setwd("F:/shiny-server/deceased_turkey/data/")
 
+# 0 5 * * * /usr/lib/R/bin/Rscript simpleRScript.R
+
 setwd("/srv/shiny-server/deceased_turkey/data/")
 
 ####################################################
 library(RSelenium)
 library(rvest)
 library(xml2)
+require(rstudioapi)
 
 system('docker run -d -p 4445:4444 selenium/standalone-chrome')
 
+#termId <- rstudioapi::terminalExecute("docker run -d -p 4445:4444 selenium/standalone-chrome")
+#rstudioapi::terminalKill(termId)
+
 load('data.Rdata')
+
+	save.image(paste0("data_backup_",substring(as.character(file.info('data.Rdata')$mtime),1,10),".Rdata"))
 
 ##############################################################################
 
-dates  <- as.Date(data$OlumTar,format="%d/%m/%Y")
+ last.date = as.Date(substring(as.character(file.info('data.Rdata')$mtime),1,10),"%Y-%m-%d")
 
-dates <- seq(from=max(dates)-45,to=Sys.Date()-1,by='days')
+dates <- seq(from=last.date-45,to=Sys.Date()-1,by='days')
 dates <- format(dates,format="%d/%m/%Y")
 
 ####################################################################################
@@ -102,37 +110,38 @@ for(i in 2:length(city)){
 ####################################################################################
 
 
-data2 = data[!data$OlumTar%in%dates,]
+temp = data[data$OlumTar%in%dates,]
 
-data2 <- rbind(data2,replace)
+comparison <- data.frame(matrix(nrow=length(dates),ncol=3))
+colnames(comparison) <- c('date','old','new')
 
-rm(list=setdiff(ls(), "data2")) 
+for(i in 1:length(dates)){
+ 
+  comparison[i,]$date = dates[i]
+  comparison[i,]$old =  nrow(temp[temp$OlumTar%in%dates[i],])
+  comparison[i,]$new =  nrow(replace[replace$OlumTar%in%dates[i],])
 
-data = data2
-rm('data2')
+}
 
-
-save.image("data.Rdata")
+write.csv(comparison,
+          paste0("comparison_",substring(as.character(file.info('data.Rdata')$mtime),1,10),".csv"),
+          row.names = FALSE)
 
 ####################################################################################
 
-#install.packages("git2r")
-#library(git2r)
+data2 = data[!data$OlumTar%in%dates,]
+data2 <- rbind(data2,replace)
 
-# Insure you have navigated to a directory with a git repo.
-#dir <- "mypath"
-#setwd(dir)
+  sub1 = data[which(data$Sehir=='istanbul'),]
+  sub2 = data2[which(data2$Sehir=='istanbul'),]
 
-# Configure git.
-#git2r::config(user.name = "myusername",user.email = "myemail")
+	if(nrow(sub2)>nrow(sub1)) {
 
-# Check git status.
-#gitstatus()
+		rm(list=setdiff(ls(), "data2")) 
+		data = data2
+		rm('data2')
+		save.image("data.Rdata")
 
-# Add and commit changes. 
-#gitadd()
-#gitcommit()
+	}
 
-# Push changes to github.
-#gitpush()
-
+####################################################################################

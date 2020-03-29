@@ -52,8 +52,13 @@ shinyServer(function(input, output) {
     
     output$finalupdate <- renderText({
       # Read the final date from the data
-      finaldate = paste0("Last Update: ", format(Sys.Date(),"%B %d,%Y"))
+      finaldate = paste0("Last Update: ", 
+                         format(as.Date(substring(as.character(file.info('data.Rdata')$mtime),1,10),"%Y-%m-%d"),
+                                "%B %d,%Y")
+                         )
     })
+    
+    
     
     ##########################################################################3
     values <- reactiveValues(plot1 = NULL,
