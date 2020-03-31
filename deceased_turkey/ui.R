@@ -117,12 +117,12 @@ shinyUI(fluidPage(
                                 fluidRow(
                                     column(10,
                                            mainPanel(
-                                               plotOutput('plot2',width = "100%",height="100%")
+                                               #plotOutput('plot2',width = "100%",height="100%")
                                         )
                                     ),
                                 
                                     column(2,
-                                           tableOutput("table2")
+                                           #tableOutput("table2")
                                     ),
                                 ),
                                 
@@ -194,12 +194,12 @@ shinyUI(fluidPage(
                                 fluidRow(
                                     column(10,
                                            mainPanel(
-                                               plotOutput('plot4',width = "100%",height="100%")
+                                              # plotOutput('plot4',width = "100%",height="100%")
                                            )
                                     ),
                                     
                                     column(2,
-                                           tableOutput("table4")
+                                          # tableOutput("table4")
                                     ),
                                 )
                        )

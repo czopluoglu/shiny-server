@@ -179,114 +179,114 @@ shinyServer(function(input, output) {
     
     ################################################################################
     
-    myplot2 <- eventReactive(req(isTruthy(input$submit)),{
-      
-      
-      if(input$sehir!='all cities'){
-        
-        data <- data[which(data$Sehir==input$sehir),]
-      }
-      
-      data$y <- substring(data$OlumTar,7,11)
-      
-      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+#    myplot2 <- eventReactive(req(isTruthy(input$submit)),{
+#      
+#      
+#      if(input$sehir!='all cities'){
+#        
+#        data <- data[which(data$Sehir==input$sehir),]
+#      }
+#      
+#      data$y <- substring(data$OlumTar,7,11)
+#      
+#      data <- data[data$y%in%(as.numeric(input$year1):2020),]
 
-      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-      
-      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
-                        format="%d/%m/%Y")
-      
-      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
-                        format="%d/%m/%Y")
-      
-      date <- seq.Date(date2,date1, by='years')
-      dates <- format(date,format="%d/%m/%Y")
-      
-      sub2 = data[data$OlumTar%in%dates,]
-      
-      sub2$day  <- substring(sub2$OlumTar,1,5)
-      sub2$year <- substring(sub2$OlumTar,7,11)
-      sub2$count <- 1
-      
-      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
-      colnames(plotd2) <- c("Year","Total")
-      plotd2$Year <- as.numeric(plotd2$Year)
-      
-      title.d <- paste0(input$month," ",input$day)
-      ek1     <- paste0(" in ",toupper(input$sehir))
-      ek2     <- paste0(" (",input$year1,"-2020)")
-      
-      tit <- paste0("Total Number of Deceased Individuals (Age>64) on ",title.d)
-      if(input$sehir!='all cities') { tit = paste0(tit,ek1)}
-      tit = paste0(tit,ek2)
-      
-      values$plot2 <- tit
-      
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
-      
-      
-      ggplot(plotd2, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3)+
-        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
-        xlab("Year")+ylab("Total")+
-        ggtitle(tit)+ 
-        scale_x_continuous(breaks=plotd2[,1])+
-        scale_y_continuous(limits=c(0,max(plotd2[,2]*1.5)))+
-        annotate('text',x=max(plotd2[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
-        annotation_custom(t, 
-                          xmin = min(plotd2[,1])-.2, 
-                          xmax = min(plotd2[,1])+(max(plotd2[,1])-min(plotd2[,1]))*.25-.2, 
-                          ymin =0, ymax = max(plotd2[,2])*.3) +
-        theme(plot.title = element_text(lineheight=.8, face="bold"),
-               plot.margin=margin(1,1,3,1))
-      
-    })
-    
+#      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+#      
+#      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+#                        format="%d/%m/%Y")
+#      
+#      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+#                        format="%d/%m/%Y")
+#      
+#      date <- seq.Date(date2,date1, by='years')
+#      dates <- format(date,format="%d/%m/%Y")
+#      
+#      sub2 = data[data$OlumTar%in%dates,]
+#      
+#      sub2$day  <- substring(sub2$OlumTar,1,5)
+#      sub2$year <- substring(sub2$OlumTar,7,11)
+#      sub2$count <- 1
+#      
+#      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
+#      colnames(plotd2) <- c("Year","Total")
+#      plotd2$Year <- as.numeric(plotd2$Year)
+#      
+#      title.d <- paste0(input$month," ",input$day)
+#      ek1     <- paste0(" in ",toupper(input$sehir))
+#      ek2     <- paste0(" (",input$year1,"-2020)")
+#      
+#      tit <- paste0("Total Number of Deceased Individuals (Age>64) on ",title.d)
+#      if(input$sehir!='all cities') { tit = paste0(tit,ek1)}
+#      tit = paste0(tit,ek2)
+#      
+#      values$plot2 <- tit
+#      
+#      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+#      
+#      
+#      ggplot(plotd2, aes(Year, Total)) + theme_bw()+
+#        geom_point(size=3)+
+#        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
+#        xlab("Year")+ylab("Total")+
+#        ggtitle(tit)+ 
+#        scale_x_continuous(breaks=plotd2[,1])+
+#        scale_y_continuous(limits=c(0,max(plotd2[,2]*1.5)))+
+#        annotate('text',x=max(plotd2[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+#        annotation_custom(t, 
+#                          xmin = min(plotd2[,1])-.2, 
+#                          xmax = min(plotd2[,1])+(max(plotd2[,1])-min(plotd2[,1]))*.25-.2, 
+#                          ymin =0, ymax = max(plotd2[,2])*.3) +
+#        theme(plot.title = element_text(lineheight=.8, face="bold"),
+#               plot.margin=margin(1,1,3,1))
+#      
+#    })
+#    
 
-    output$plot2 <- renderPlot({
-      myplot2()
-    },height = 450, width = 700)
-    
-    tab2 <- eventReactive(req(isTruthy(input$submit)), {
-      
-      
-      if(input$sehir!='all cities'){
-        
-        data <- data[which(data$Sehir==input$sehir),]
-      }
-      
-      data$y <- substring(data$OlumTar,7,11)
-      
-      data <- data[data$y%in%(as.numeric(input$year1):2020),]
-      
-      
-      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-      
-      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
-                        format="%d/%m/%Y")
-      
-      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
-                        format="%d/%m/%Y")
-      
-      date <- seq.Date(date2,date1, by='years')
-      dates <- format(date,format="%d/%m/%Y")
-      
-      sub2 = data[data$OlumTar%in%dates,]
-      
-      sub2$day  <- substring(sub2$OlumTar,1,5)
-      sub2$year <- substring(sub2$OlumTar,7,11)
-      sub2$count <- 1
-      
-      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
-      colnames(plotd2) <- c("Year","Total")
-      plotd2$Year <- as.numeric(plotd2$Year)
-      
-      plotd2
-    })
-    
-    output$table2 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
-      tab2()
-    })
+#    output$plot2 <- renderPlot({
+#      myplot2()
+#    },height = 450, width = 700)
+#    
+#    tab2 <- eventReactive(req(isTruthy(input$submit)), {
+#      
+#      
+#      if(input$sehir!='all cities'){
+#        
+#        data <- data[which(data$Sehir==input$sehir),]
+#      }
+#      
+#      data$y <- substring(data$OlumTar,7,11)
+#      
+#      data <- data[data$y%in%(as.numeric(input$year1):2020),]
+#      
+#      
+#      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+#      
+#      date1  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2020),
+#                        format="%d/%m/%Y")
+#      
+#      date2  <- as.Date(paste0(input$day,"/",which(M==input$month),"/",2010),
+#                        format="%d/%m/%Y")
+#      
+#      date <- seq.Date(date2,date1, by='years')
+#      dates <- format(date,format="%d/%m/%Y")
+#      
+#      sub2 = data[data$OlumTar%in%dates,]
+#      
+#      sub2$day  <- substring(sub2$OlumTar,1,5)
+#      sub2$year <- substring(sub2$OlumTar,7,11)
+#      sub2$count <- 1
+#      
+#      plotd2 <- aggregate(count ~ year,data=sub2[which(sub2$Yasi>64),],FUN=sum)
+#      colnames(plotd2) <- c("Year","Total")
+#      plotd2$Year <- as.numeric(plotd2$Year)
+#      
+#      plotd2
+#    })
+#    
+#    output$table2 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
+#      tab2()
+#    })
     
     #################################################################################
     
@@ -408,115 +408,116 @@ shinyServer(function(input, output) {
     
     ###################################################################################
 
-    myplot4 <- eventReactive(req(isTruthy(input$submit2)),{
+#    myplot4 <- eventReactive(req(isTruthy(input$submit2)),{
+#      
+#      if(input$sehir2!='all cities'){
+#        
+#        data2 <- data2[which(data2$Sehir==input$sehir2),]
+#      }
+#      
+#      data2$y <- substring(data2$OlumTar,7,11)
+#      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
+#      
+#      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+#      
+#      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+#      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
+#      
+#      date <- seq.Date(beg,beg2, by='days')
+#      date <- format(date,format="%d/%m/%Y")
+#      
+#      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
+#      for(i in 2:length(date)){
+#        dates = c(dates,
+#                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
+#      }
       
-      if(input$sehir2!='all cities'){
-        
-        data2 <- data2[which(data2$Sehir==input$sehir2),]
-      }
       
-      data2$y <- substring(data2$OlumTar,7,11)
-      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
-      
-      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-      
-      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
-      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
-      
-      date <- seq.Date(beg,beg2, by='days')
-      date <- format(date,format="%d/%m/%Y")
-      
-      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
-      for(i in 2:length(date)){
-        dates = c(dates,
-                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
-      }
-      
-      
-      sub4 = data2[data2$OlumTar%in%dates,]
-      sub4$day  <- substring(sub4$OlumTar,1,5)
-      sub4$year <- substring(sub4$OlumTar,7,11)
-      sub4$count <- 1
-      
-      plotd4           <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
-      colnames(plotd4) <- c("Year","Total")
-      plotd4$Year      <- as.numeric(plotd4$Year)
-      
-      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+#      sub4 = data2[data2$OlumTar%in%dates,]
+#      sub4$day  <- substring(sub4$OlumTar,1,5)
+#      sub4$year <- substring(sub4$OlumTar,7,11)
+#      sub4$count <- 1
+#      
+#      plotd4           <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
+#      colnames(plotd4) <- c("Year","Total")
+#      plotd4$Year      <- as.numeric(plotd4$Year)
+#      
+#      t <- rasterGrob(png::readPNG('logo.png'),interpolate = TRUE)
+#    
+#      title.d <- paste0(input$month.beg," ",input$day.beg," and ",
+#                        input$month.end," ",input$day.end)
+#      
+#      ek1     <- paste0(" in ",toupper(input$sehir2))
+#      ek2     <- paste0(" (",input$year2,"-2020)")
+#      tit <- paste0("Total Number of Deceased Individuals (Age>64) between ",title.d)
+#      if(input$sehir2!='all cities') { tit = paste0(tit,ek1)}
+#      tit = paste0(tit,ek2)
+#      
+#      values$plot4 <- tit
+#      
+#      ggplot(plotd4, aes(Year, Total)) + theme_bw()+
+#        geom_point(size=3)+
+#        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
+#        xlab("Year")+ylab("Total")+
+#        ggtitle(tit)  +
+#        scale_x_continuous(breaks=plotd4[,1])+
+#        scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
+#        annotate('text',x=max(plotd4[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
+#        annotation_custom(t, 
+#                          xmin = min(plotd4[,1])-.2, xmax = min(plotd4[,1])+(max(plotd4[,1])-min(plotd4[,1]))*.25-.2, 
+#                          ymin =0, ymax = max(plotd4[,2])*.3)+
+#        theme(plot.title = element_text(lineheight=.8, face="bold"),
+#              plot.margin=margin(1,1,3,1))
+#      
+#      
+#    })
     
-      title.d <- paste0(input$month.beg," ",input$day.beg," and ",
-                        input$month.end," ",input$day.end)
-      
-      ek1     <- paste0(" in ",toupper(input$sehir2))
-      ek2     <- paste0(" (",input$year2,"-2020)")
-      tit <- paste0("Total Number of Deceased Individuals (Age>64) between ",title.d)
-      if(input$sehir2!='all cities') { tit = paste0(tit,ek1)}
-      tit = paste0(tit,ek2)
-      
-      values$plot4 <- tit
-      
-      ggplot(plotd4, aes(Year, Total)) + theme_bw()+
-        geom_point(size=3)+
-        geom_line(lty=2,col='gray') + #geom_smooth(method = "loess")+
-        xlab("Year")+ylab("Total")+
-        ggtitle(tit)  +
-        scale_x_continuous(breaks=plotd4[,1])+
-        scale_y_continuous(limits=c(0,max(plotd4[,2]*1.2)))+
-        annotate('text',x=max(plotd4[,1])-.6, y=0,label="Source: www.turkiye.gov.tr") +
-        annotation_custom(t, 
-                          xmin = min(plotd4[,1])-.2, xmax = min(plotd4[,1])+(max(plotd4[,1])-min(plotd4[,1]))*.25-.2, 
-                          ymin =0, ymax = max(plotd4[,2])*.3)+
-        theme(plot.title = element_text(lineheight=.8, face="bold"),
-              plot.margin=margin(1,1,3,1))
-      
-      
-    })
-    
-    output$plot4 <- renderPlot({
-      myplot4()
-    },height = 450, width = 700)
-    
-    tab4 <- eventReactive(req(isTruthy(input$submit2)), {
-      
-      if(input$sehir2!='all cities'){
-        
-        data2 <- data2[which(data2$Sehir==input$sehir2),]
-      }
-      
-      data2$y <- substring(data2$OlumTar,7,11)
-      
-      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
-      
-      
-      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-      
-      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
-      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
-      
-      date <- seq.Date(beg,beg2, by='days')
-      date <- format(date,format="%d/%m/%Y")
-      
-      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
-      for(i in 2:length(date)){
-        dates = c(dates,
-                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
-      }
-      
-      
-      sub4 = data2[data2$OlumTar%in%dates,]
-      sub4$day  <- substring(sub4$OlumTar,1,5)
-      sub4$year <- substring(sub4$OlumTar,7,11)
-      sub4$count <- 1
-      
-      plotd4 <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
-      colnames(plotd4) <- c("Year","Total")
-      plotd4$Year <- as.numeric(plotd4$Year)
-      
-      plotd4
-    })
-    
-    output$table4 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
-      tab4()
-    })
+#    output$plot4 <- renderPlot({
+#      myplot4()
+#    },height = 450, width = 700)
+#    
+#    tab4 <- eventReactive(req(isTruthy(input$submit2)), {
+#      
+#      if(input$sehir2!='all cities'){
+#        
+#        data2 <- data2[which(data2$Sehir==input$sehir2),]
+#      }
+#      
+#      data2$y <- substring(data2$OlumTar,7,11)
+#      
+#      data2 <- data2[data2$y%in%(as.numeric(input$year2):2020),]
+#      
+#      
+#      M = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+#      
+#      beg  <- as.Date(paste0(input$day.beg,"/",which(M==input$month.beg),"/",2020),format="%d/%m/%Y")
+#      beg2 <- as.Date(paste0(input$day.end,"/",which(M==input$month.end),"/",2020),format="%d/%m/%Y")
+#      
+#      date <- seq.Date(beg,beg2, by='days')
+#      date <- format(date,format="%d/%m/%Y")
+#      
+#      dates = c(paste0(substring(as.character(date[1]),1,6),2010:2019),as.character(date[1]))
+#      for(i in 2:length(date)){
+#        dates = c(dates,
+#                  c(paste0(substring(as.character(date[i]),1,6),2010:2019),as.character(date[i])))
+#      }
+#      
+#      
+#      sub4 = data2[data2$OlumTar%in%dates,]
+#      sub4$day  <- substring(sub4$OlumTar,1,5)
+#      sub4$year <- substring(sub4$OlumTar,7,11)
+#      sub4$count <- 1
+#      
+#      plotd4 <- aggregate(count ~ year,data=sub4[which(sub4$Yasi>64),],FUN=sum)
+#      colnames(plotd4) <- c("Year","Total")
+#      plotd4$Year <- as.numeric(plotd4$Year)
+#      
+#      plotd4
+#    })
+#    
+#    output$table4 <- renderTable(digits=0,bordered=TRUE,striped=TRUE,{
+#      tab4()
+#    })
+#    
     
 })
