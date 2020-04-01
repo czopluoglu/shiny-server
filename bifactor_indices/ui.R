@@ -17,7 +17,7 @@ rownames(m) <- c("Item 1","Item 2","Item 3","Item 4","Item 5","Item 6","Item 7",
 shinyUI(fluidPage(
     
     tags$head(tags$style("#step1{color: black;
-                                 font-size: 12px;
+                                 font-size: 14px;
                                  font-weight: bold;
                                  }"
     )
@@ -51,8 +51,10 @@ shinyUI(fluidPage(
     )
     ),
     
-    tags$head(
-        tags$style(HTML('#create{background-color: #85c1e9 ;font-weight:bold;color:black}'))
+    tags$head(tags$style("#step{color: black;
+                                 font-size: 18px;
+                                 }"
+    )
     ),
     
     tags$head(
@@ -64,58 +66,74 @@ shinyUI(fluidPage(
     
     titlePanel("Utility Indices for Bifactor Model"),
 
-    fluidRow(
-        column(2,
+            sidebarPanel(id="sidebar",
+              
+               br(),
+                
+                tags$h5("This Shiny app calculates the indices useful for bifactor models.
+                        These indices are discussed in detail by the Rodriguez et al. (2016)."),
+                br(),
+                         
+                uiOutput("info3"),
+                         
+                hr(),
+                
+                h5("For questions: Cengiz Zopluoglu"),
+                
+                uiOutput("info"),
+                
+                uiOutput("info2"),
+                         
+                hr(),
                
-            br(),
-            tags$h5("This Shiny app calculates the indices useful for bifactor models.
-                    These indices are discussed in detail by the Rodriguez et al. (2006)."),
-            br(),
-            
-            uiOutput("info3"),
-            
-            hr(),
-            h5("For questions: Cengiz Zopluoglu"),
-            uiOutput("info"),
-            uiOutput("info2"),
-            
-            hr(),
-            textOutput("step1"),
-            textInput('nitem',"",value=9,width="25%"),
-            
-            hr(),
-            textOutput("step2"),
-            selectInput('nsub',"",selected=3,c(2:10),width="25%"),
-            
-            hr(),
-            textOutput("step3"),
-            br(),
-            actionButton("create", "Create the input matrix",width="60%"),
-            
-            hr(),
-            textOutput("step4"),
-            
-            hr(),
-            textOutput("step5"),
-            actionButton("calculate", "Calculate",width="60%"),
-            
+               textOutput("step1")
+                         
             ),
+          
+            mainPanel(
+                tabsetPanel(
+                    
+                    tabPanel("Input", align='center',
+                             
+                             br(),
+                             
+                             textOutput("step"),
+                             
+                             hr(),
+                             
+                             fluidRow(
+                                 br(),
+                                column(6, 
+                                       
+                                       fileInput("file1", "Choose CSV File",
+                                                 multiple = FALSE,
+                                                 accept = c("text/csv",
+                                                            "text/comma-separated-values,text/plain",
+                                                            ".csv"))
+                                ),
+                                
+                                column(2,
+                                       br(),
+                                       actionButton('calculate',
+                                                    "Calculate Indices")    
+                                ),
+                                
+                                column(4)
+                                
+                                ),
+                                
+                             
+                             hr(),
+                             
+                             fluidRow(
+                                 tableOutput("table1")
+                                 )
+                             
+                             ),
+                    
+                    tabPanel("Panel 2", align='center')
+                    
+                    )
+            )
         
-        column(6,
-               mainPanel(
-                matrixInput("matrix1", 
-                               value=m,
-                               paste=TRUE,
-                               copy=TRUE,
-                               class = "numeric",
-                            rows = list(names=TRUE,extended=TRUE),
-                            cols = list(names=TRUE,extended=TRUE))
-               )
-               
-               ),
-        
-        column(4),
-        
-        
-    )
 ))

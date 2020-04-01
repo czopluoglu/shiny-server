@@ -29,27 +29,46 @@ shinyServer(function(input, output) {
     })
     
     output$step1 <- renderText({
-      "Step 1. Enter the number of items and number of group factors to create the input matrix"
+      "Step 1. Upload the input factor loading matrix by using the Input tab in the right panel."
     })
     
     output$step2 <- renderText({
-      "Step 2. Select the number of group factors"
+      "Step 2. Check the accuracy of imported matrix and hit Calculate Indices Button"
     })
     
     
     output$step3 <- renderText({
-      "Step 3. Create the input matrix"
+      "Step 3. Go to the different tabs to see the results."
     })
     
-    output$step4 <- renderText({
-      "Step 4. Enter the standardized factor loadings from your analysis in the input matrix"
+    output$step <- renderText({
+      "Input matrix must be a comma separated text file including the standardized factor loadings.
+      The first column must include the factor loadings for the general factor, and the remaining
+      columns must include the factor loadings for the specific factors."
     })
     
-    output$step5 <- renderText({
-      "Step 5. Hit Calculate to get a report of the utility indices"
-    })
     
-    
+    output$table1 <- renderTable(digits=3,bordered=TRUE,striped=TRUE,{
+      req(input$file1)
+      df <- read.csv(input$file1$datapath,header = FALSE)
+      
+      cnames = "G"
+      for(i in 1:(ncol(df)-1)){
+        cnames=c(cnames,paste0("G",i))
+      }
+      
+      colnames(df) = cnames
+      
+      rnames = "Item 1"
+      for(i in 2:nrow(df)){
+        rnames=c(rnames,paste0("Item ",i))
+      }
+      
+      rownames(df) = rnames
+      
+      
+      df
+    },rownames = TRUE)
     
 
     
