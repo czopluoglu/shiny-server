@@ -1,14 +1,5 @@
-# Deceased Statistics - TURKEY
 
 library(shiny)
-library(shinyWidgets)
-library(shinyMatrix)
-
-m <- matrix(NA,9,4)
-
-colnames(m) <- c("G","S1","S2","S3")
-rownames(m) <- c("Item 1","Item 2","Item 3","Item 4","Item 5","Item 6","Item 7","Item 8","Item 9")
-
 
 ###############################################################3
 
@@ -54,6 +45,31 @@ shinyUI(fluidPage(
     
     
     tags$head(tags$style("#text2{color: black;
+                                 font-size: 18px;
+                                 }"
+    )
+    ),
+    
+    tags$head(tags$style("#text3{color: black;
+                                 font-size: 16px;
+                                 }"
+    )
+    ),
+    
+    
+    tags$head(tags$style("#text4{color: black;
+                                 font-size: 16px;
+                                 }"
+    )
+    ),
+    
+    tags$head(tags$style("#text5{color: black;
+                                 font-size: 16px;
+                                 }"
+    )
+    ),
+    
+    tags$head(tags$style("#info4{color: black;
                                  font-size: 18px;
                                  }"
     )
@@ -111,7 +127,7 @@ shinyUI(fluidPage(
                              br(),
                              
                              textOutput("text1"),
-                             
+                             uiOutput("info4"),
                              br(),
                              
                              textOutput("text2"),
@@ -120,7 +136,8 @@ shinyUI(fluidPage(
                              
                              fluidRow(
                                  br(),
-                                column(4, 
+                                column (1),
+                                column(3, 
                                        
                                        fileInput("file1", "Choose CSV File",
                                                  multiple = FALSE,
@@ -128,13 +145,13 @@ shinyUI(fluidPage(
                                                             "text/comma-separated-values,text/plain",
                                                             ".csv"))
                                 ),
-                                
+                                column(1),
                                 column(4,
                                        textInput('pos',"Enter starting item positons for specific factors",
-                                                 width='100%', value="1,8,14")
+                                                 width='100%', value="1,13,22,31")
                                        ),
                                 
-                                column(4)
+                                column(3)
                                 
                                 ),
                              
@@ -144,21 +161,77 @@ shinyUI(fluidPage(
                                         br(),
                                         actionButton('calculate',
                                                      "Calculate Indices")),
-                                 column(2),
-                                 column(4)
+                                 column(6),
                              ),
                              
                              hr(),
                              
                              fluidRow(
-                                 tableOutput("table1")
+                                 column(8,
+                                        tableOutput("table1")
+                                 ),
+                                 column(4)
+                                 
                                  )
                              
                              ),
                     
-                    tabPanel("Panel 2", align='center')
+                    tabPanel("Omega Hierarchical", align='center',
+                             
+                             br(),
+                             tableOutput("omegaH"),
+                             hr(),
+                             textOutput("text3"),
+                             hr(),
+                             uiOutput("cit1")
+                             ),
                     
+                    tabPanel("Factor Determinacy", align='center',
+                             
+                             br(),
+                             tableOutput("FD"),
+                             hr(),
+                             textOutput("text4"),
+                             hr(),
+                             uiOutput("cit2"),
+                             br(),
+                             uiOutput("cit3")
+                             
+                    ),
+                    
+                    tabPanel("Construct Reliability", align='center',
+                             
+                             br(),
+                             tableOutput("H"),
+                             hr(),
+                             textOutput("text5"),
+                             hr(),
+                             uiOutput("cit4"),
+                             
+                    ),
+                    
+                    tabPanel("Explained Common Variance", align='center',
+                             
+                             br(),
+                             tableOutput("ECV"),
+                             hr(),
+                             textOutput("text6"),
+                             br(),
+                             textOutput("text7"),
+                             hr(),
+                             uiOutput("cit5"),
+                             br(),
+                             uiOutput("cit6"),
+                             hr(),
+                             tableOutput("IECV")
+                             
+                             
                     )
-            )
+                    
+                    ),
+                
+            ),
+    
+
         
 ))
