@@ -9,7 +9,7 @@ library(shinyWidgets)
 shinyUI(fluidPage(
 
     
-    tags$head(includeHTML(("/srv/shiny-server/deceased_turkey/google-analytics.html"))),
+    #tags$head(includeHTML(("/srv/shiny-server/deceased_turkey/google-analytics.html"))),
     
     titlePanel(""),
 

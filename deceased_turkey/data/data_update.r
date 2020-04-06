@@ -18,13 +18,13 @@ system('docker run -d -p 4445:4444 selenium/standalone-chrome')
 
 load('data.Rdata')
 
-	save.image(paste0("data_backup_",substring(as.character(file.info('data.Rdata')$mtime),1,10),".Rdata"))
+	save.image("data_backup_.Rdata")
 
 ##############################################################################
 
  last.date = as.Date(substring(as.character(file.info('data.Rdata')$mtime),1,10),"%Y-%m-%d")
 
-dates <- seq(from=last.date-45,to=Sys.Date()-1,by='days')
+dates <- seq(from=last.date-31,to=Sys.Date()-1,by='days')
 dates <- format(dates,format="%d/%m/%Y")
 
 ####################################################################################
@@ -43,7 +43,7 @@ cities = c('bursa','denizli','diyarbakir','istanbul','kahramanmaras',
 
 city <- vector('list')
 
-for(i in 1:length(cities)){
+for(i in 2:length(cities)){
   
   url  = paste0(website,"/",cities[i],'-buyuksehir-belediyesi-vefat-sorgulama')
   
@@ -54,7 +54,7 @@ for(i in 1:length(cities)){
     tables[[j]]=list()
     rep = 0
     
-    while(length(tables[[j]])==0 & rep<20){
+    while(length(tables[[j]])==0 & rep<3){
       remDr$navigate(url)
       element<- remDr$findElement(using = 'css selector', "#tarih")
       button <- remDr$findElement(using = 'css selector', ".submitButton") 
@@ -85,9 +85,16 @@ for(i in 1:length(cities)){
     }
   }
   
-  tab <- tables[[1]][[1]]
+
+  count=1
+
+  while(length(tables[[count]])==0){
+	count = count+1
+  }
+
+  tab <- tables[[count]][[1]]
   
-  for(k in 2:length(tables)){
+  for(k in (count+1):length(tables)){
     
     if(length(tables[[k]])!=0){
       tab <- rbind(tab,tables[[k]][[1]])
@@ -109,39 +116,50 @@ for(i in 2:length(city)){
 
 ####################################################################################
 
+city.check = c()
 
 temp = data[data$OlumTar%in%dates,]
 
-comparison <- data.frame(matrix(nrow=length(dates),ncol=3))
-colnames(comparison) <- c('date','old','new')
+for(j in 1:length(cities)) {
 
-for(i in 1:length(dates)){
+	comparison <- data.frame(matrix(nrow=length(dates),ncol=3))
+	colnames(comparison) <- c('date','old','new')
+
+	for(i in 1:length(dates)){
  
-  comparison[i,]$date = dates[i]
-  comparison[i,]$old =  nrow(temp[temp$OlumTar%in%dates[i],])
-  comparison[i,]$new =  nrow(replace[replace$OlumTar%in%dates[i],])
+	  comparison[i,]$date = dates[i]
+	  comparison[i,]$old =  nrow(temp[temp$OlumTar%in%dates[i] & temp$Sehir==cities[j],])
+	  comparison[i,]$new =  nrow(replace[replace$OlumTar%in%dates[i] & replace$Sehir==cities[j],])
+
+	}
+
+	write.csv(comparison,
+        	  paste0("comparison_",as.character(Sys.Date()),"_",cities[j],".csv"),
+	          row.names = FALSE)
+
+	city.check[j] = ifelse(sum(comparison[,3])>sum(comparison[,2]),1,0)
 
 }
 
-write.csv(comparison,
-          paste0("comparison_",substring(as.character(file.info('data.Rdata')$mtime),1,10),".csv"),
-          row.names = FALSE)
-
 ####################################################################################
 
-data2 = data[!data$OlumTar%in%dates,]
-data2 <- rbind(data2,replace)
+data.new = data
 
-  sub1 = data[which(data$Sehir=='istanbul'),]
-  sub2 = data2[which(data2$Sehir=='istanbul'),]
+for(j in 1:length(cities)) {
+  if(city.check[j]==1){
+	data2 = data.new[!data.new$OlumTar%in%dates & data.new$Sehir==cities[j],]
+	replace2 = replace[which(replace$Sehir==cities[j]),]
+	data2 <- rbind(data2,replace2)
+	
+	data.temp = data.new[!data.new$Sehir==cities[j],]
+	data.new <- rbind(data.temp,data2)
+   }
+}
 
-	if(nrow(sub2)>nrow(sub1)) {
 
-		rm(list=setdiff(ls(), "data2")) 
-		data = data2
-		rm('data2')
-		save.image("data.Rdata")
-
-	}
+	rm(list=setdiff(ls(), "data.new")) 
+	data = data.new
+	rm('data.new')
+	save.image("data.Rdata")
 
 ####################################################################################
