@@ -1,7 +1,5 @@
 library(shiny)
 library(plotly)
-library(mvQuad)
-library(lubridate)
 
 #########################################################################
 p <- function(t,a,b,g,d){
@@ -49,13 +47,12 @@ shinyServer(function(input, output,session) {
       
         grid    <- expand.grid(a=seq(0,4,.1),b=seq(-3,3,.1))
         grid$LL <- NA
-        th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-        b.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-        a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-        P.m     <- input$g + (input$d-input$g)*(1/(1+exp(-a.m*(th.m-b.m))))
-        Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-        grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
         
+        for(i in 1:nrow(grid)){
+          P = input$g + (input$d-input$g)*(1/(1+exp(-grid[i,1]*(th-grid[i,2]))))
+          grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+        }
+
         if(input$xaxis=='a' & input$yaxis=='b'){
           pl <-   plot_ly(grid, 
                     x = ~a, 
@@ -91,12 +88,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(a=seq(0,4,.1),g=seq(0,.3,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      g.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (input$d-g.m)*(1/(1+exp(-a.m*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = grid[i,2] + (input$d-grid[i,2])*(1/(1+exp(-grid[i,1]*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='a' & input$yaxis=='g'){
           pl <- plot_ly(grid, 
@@ -134,12 +130,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(a=seq(0,4,.1),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- input$g + (d.m-input$g)*(1/(1+exp(-a.m*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = input$g + (grid[i,2]-input$g)*(1/(1+exp(-grid[i,1]*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='a' & input$yaxis=='d'){
           pl <- plot_ly(grid, 
@@ -176,12 +171,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(b=seq(-3,3,.1),g=seq(0,.3,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      g.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      b.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (input$d-g.m)*(1/(1+exp(-input$a*(th.m-b.m))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = grid[i,2]+ (input$d-grid[i,2])*(1/(1+exp(-input$a*(th-grid[i,1]))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='b' & input$yaxis=='g'){
           pl <- plot_ly(grid, 
@@ -220,12 +214,12 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(b=seq(-3,3,.1),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      b.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- input$g + (d.m-input$g)*(1/(1+exp(-input$a*(th.m-b.m))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+      
+      for(i in 1:nrow(grid)){
+        P = input$g + (grid[i,2]-input$g)*(1/(1+exp(-input$a*(th-grid[i,1]))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
+      
       
       if(input$xaxis=='b' & input$yaxis=='d'){
         pl <- plot_ly(grid, 
@@ -263,12 +257,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(g=seq(0,.3,.005),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      g.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (d.m-g.m)*(1/(1+exp(-input$a*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+      
+      for(i in 1:nrow(grid)){
+        P = grid[i,1]+ (grid[i,2]-grid[i,1])*(1/(1+exp(-input$a*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='g' & input$yaxis=='d'){
         pl <- plot_ly(grid, 
@@ -312,13 +305,12 @@ shinyServer(function(input, output,session) {
 
       grid    <- expand.grid(a=seq(0,4,.1),b=seq(-3,3,.1))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      b.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- input$g + (input$d-input$g)*(1/(1+exp(-a.m*(th.m-b.m))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
-
+      
+      for(i in 1:nrow(grid)){
+        P = input$g + (input$d-input$g)*(1/(1+exp(-grid[i,1]*(th-grid[i,2]))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
+      
       if(input$xaxis=='a' & input$yaxis=='b'){
         
         pl <- plot_ly(grid, 
@@ -365,12 +357,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(a=seq(0,4,.1),g=seq(0,.3,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      g.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (input$d-g.m)*(1/(1+exp(-a.m*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = grid[i,2] + (input$d-grid[i,2])*(1/(1+exp(-grid[i,1]*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='a' & input$yaxis=='g'){
         pl <- plot_ly(grid, 
@@ -416,12 +407,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(a=seq(0,4,.1),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      a.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- input$g + (d.m-input$g)*(1/(1+exp(-a.m*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+      
+      for(i in 1:nrow(grid)){
+        P = input$g + (grid[i,2]-input$g)*(1/(1+exp(-grid[i,1]*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='a' & input$yaxis=='d'){
         pl <- plot_ly(grid, 
@@ -467,12 +457,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(b=seq(-3,3,.1),g=seq(0,.3,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      g.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      b.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (input$d-g.m)*(1/(1+exp(-input$a*(th.m-b.m))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = grid[i,2]+ (input$d-grid[i,2])*(1/(1+exp(-input$a*(th-grid[i,1]))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='b' & input$yaxis=='g'){
         pl <- plot_ly(grid, 
@@ -519,12 +508,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(b=seq(-3,3,.1),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      b.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- input$g + (d.m-input$g)*(1/(1+exp(-input$a*(th.m-b.m))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = input$g + (grid[i,2]-input$g)*(1/(1+exp(-input$a*(th-grid[i,1]))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='b' & input$yaxis=='d'){
         pl <- plot_ly(grid, 
@@ -570,12 +558,11 @@ shinyServer(function(input, output,session) {
       
       grid    <- expand.grid(g=seq(0,.3,.005),d=seq(0.7,1,.005))
       grid$LL <- NA
-      th.m    <- matrix(th,nrow=nrow(grid),ncol=length(th),byrow=T)
-      d.m     <- matrix(grid[,2],nrow=nrow(grid),ncol=length(th),byrow=F)
-      g.m     <- matrix(grid[,1],nrow=nrow(grid),ncol=length(th),byrow=F)
-      P.m     <- g.m + (d.m-g.m)*(1/(1+exp(-input$a*(th.m-input$b))))
-      Y.m     <- matrix(y,nrow=nrow(grid),ncol=length(th),byrow=T)
-      grid[,3] <- rowSums(log(P.m)*Y.m + log(1-P.m)*(1-Y.m))
+
+      for(i in 1:nrow(grid)){
+        P = grid[i,1]+ (grid[i,2]-grid[i,1])*(1/(1+exp(-input$a*(th-input$b))))
+        grid[i,3] = sum(log(P*y + (1-P)*(1-y)))
+      }
       
       if(input$xaxis=='g' & input$yaxis=='d'){
         pl <- plot_ly(grid, 
