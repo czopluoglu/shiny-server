@@ -17,8 +17,8 @@
 #options(shiny.error = browser) 
 #options(shiny.error = recover)
 
-setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
-#setwd("F:/shiny-server/deceased_turkey/data/")
+#setwd("C:/Users/Dr Zopluoglu/Desktop/shiny-server/deceased_turkey/data")
+setwd("D:/shiny-server/deceased_turkey/data/")
 
 #setwd("/srv/shiny-server/deceased_turkey/data/")
 

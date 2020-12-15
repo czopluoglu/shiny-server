@@ -135,7 +135,7 @@ shinyUI(
              fluidRow(
                column(12,
                       actionBttn("reset", 
-                                 label = "RESET EVERTYTHING",
+                                 label = "RESET EVERYTHING",
                                  style="simple",
                                  color="primary",
                                  size = "md")
