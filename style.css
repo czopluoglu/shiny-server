@@ -1,0 +1,66 @@
+.center {
+  text-align: center;
+}
+
+
+.bl {
+  color: white;
+  width: 100px;
+  height:500px;
+
+}
+
+.logl {
+  padding: 0em;
+  background-image: url("C:/Users/cengiz/Desktop/Github/shiny-server/images/loglikelihood.png");
+  color: black;
+  width: 500px;
+  height:500px;
+
+}
+
+.pp {
+  padding: 0em;
+  background-image: url("C:/Users/cengiz/Desktop/Github/shiny-server/images/personparameter.png");
+  color: black;
+  width: 500px;
+  height:500px;
+
+}
+
+.pr {
+  padding: 0em;
+  background-image: url("C:/Users/cengiz/Desktop/Github/shiny-server/images/irtpropensity.png");
+  color: black;
+  width: 500px;
+  height:500px;
+
+}
+
+
+.names {
+  padding: 0em;
+  background-image: url("C:/Users/cengiz/Desktop/Github/shiny-server/images/names.png");
+  color: black;
+  width: 500px;
+  height:500px;
+
+}
+
+.tr {
+  padding: 0em;
+  background-image: url("C:/Users/cengiz/Desktop/Github/shiny-server/images/tr-covid.png");
+  color: black;
+  width: 500px;
+  height:500px;
+
+}
+
+.bluebox {
+  padding: 2em;
+  background: rgb(52,117,180);
+  color: white;
+  width: 1100px;
+  height:125px;
+
+}

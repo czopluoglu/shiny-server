@@ -1,0 +1,107 @@
+---
+title: ""
+
+output:
+  html_document:
+    css: style.css
+---
+
+
+:::: {.bluebox data-latex=""}
+::: {.center data-latex=""}
+# Welcome to Cengiz Zopluoglu's Shiny/Rstudio Server!
+:::
+::::
+
+&nbsp;
+
+:::: {style="display: flex;"}
+
+::: {}
+
+:::: {.logl data-latex=""}
+::: {.center data-latex=""}
+[**Exploring Loglikelihood Surface for IRT Models**](https://cengiz-shiny.app/shiny/loglikelihood)
+:::
+::::
+
+:::
+
+::: {}
+:::: {.bl data-latex=""}
+::::
+:::
+
+
+::: {}
+
+:::: {.pp data-latex=""}
+::: {.center data-latex=""}
+[**Person Parameter Estimation - Guessing Game**](https://cengiz-shiny.app/shiny/personparameter)
+:::
+::::
+
+:::
+
+::::
+
+&nbsp;
+
+:::: {style="display: flex;"}
+
+::: {}
+
+:::: {.pr data-latex=""}
+::: {.center data-latex=""}
+[**IRT Propensity Demo**](https://cengiz-shiny.app/shiny/irtpropensity)
+:::
+::::
+
+:::
+
+::: {}
+:::: {.bl data-latex=""}
+::::
+:::
+
+
+::: {}
+
+:::: {.names data-latex=""}
+::: {.center data-latex=""}
+[**US Names Database**](https://cengiz-shiny.app/shiny/personparameter)
+:::
+::::
+
+:::
+
+::::
+
+
+&nbsp;
+
+:::: {style="display: flex;"}
+
+::: {}
+
+:::: {.tr data-latex=""}
+::: {.center data-latex=""}
+[**Turkey - COVID 19 Excess Death Monitoring**](https://cengiz-shiny.app/shiny/deceased_turkey)
+:::
+::::
+
+:::
+
+::: {}
+:::: {.bl data-latex=""}
+::::
+:::
+
+
+::: {}
+:::: {.bl data-latex=""}
+::::
+:::
+
+
+::::
