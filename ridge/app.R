@@ -53,8 +53,8 @@ server <- function(input, output) {
       pl <- plot_ly(grid, x = ~b0, y = ~b1, z = ~SSR, 
               marker = list(color = ~SSR,
                             showscale = TRUE,
-                            cmin=min(grid$SSR)*5,
-                            cmax=min(grid$SSR),cauto=F),
+                            cmin=min(grid$SSR),
+                            cmax=max(grid$SSR),cauto=F),
               width=600,height=600) %>% 
         add_markers()
       
