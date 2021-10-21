@@ -14,7 +14,9 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Regularized Regression with Ridge Penalty"),
-
+    
+    HTML('<p>Calculations may take 10-15 seconds for the plot to show up after entering a new value.</p>'),
+    
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
@@ -24,7 +26,26 @@ ui <- fluidPage(
                          width='50%'),
             textOutput("ssr"),
             textOutput("b0"),
-            textOutput("b1")
+            textOutput("b1"),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML('<p>Cengiz Zopluoglu <cengiz@uoregon.edu> </p>'),
+            HTML('<p>cengiz@uoregon.edu</p>'),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML('<a href="https://cengiz.me/"> Personal Website </a>'),
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML('<a href="https://education.uoregon.edu/qrme"> Learn about the Quantitative Research Methods Program </a>'), 
+            HTML("<br>"),
+            HTML("<br>"),
+            HTML('<a href="https://education.uoregon.edu/"> Learn about the College of Education at UO </a>')
+            
+            
             ),
 
         # Show a plot of the generated distribution
