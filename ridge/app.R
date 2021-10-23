@@ -13,7 +13,7 @@ require(tidyr)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Regularized Regression with Ridge Penalty"),
+    titlePanel("Explore the Loss Function for Regularized Regression"),
     
     HTML('<p>Calculations may take 10-15 seconds for the plot to show up after entering a new value.</p>'),
     
