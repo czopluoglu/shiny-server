@@ -1,6 +1,7 @@
 library(shiny)
 library(shinyWidgets)
 
+
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
     
@@ -82,7 +83,7 @@ shinyUI(fluidPage(
     
     fluidRow(
       column(3,
-             "Contact information"
+             "Contact information",
              ),
       column(5,
              'What do these scores mean?'
