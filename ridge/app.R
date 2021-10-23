@@ -20,10 +20,27 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            numericInput("lambda", 
-                         label = "Lambda", 
-                         value = 0,
+          
+          HTML("<b>Ridge Regression</b>: Enter 0 for the Elastic Net mixing parameter and a positive lambda value for the penalty term."),
+          HTML("<br>"),
+          HTML("<br>"),
+          HTML("<b>Lasso Regression</b>: Enter 1 for the Elastic Net mixing parameter and a positive lambda value for the penalty term."),
+          HTML("<br>"),
+          HTML("<br>"),
+          HTML("<b>Elastic Net</b>: Enter a value between 0 and 1 for the Elastic Net mixing parameter and a positive lambda value for the penalty term."),
+          HTML("<br>"),
+          HTML("<br>"),
+
+          numericInput("mix", 
+                         label = "Elastic Net Mixing Parameter (Alpha)", 
+                         value = '',
                          width='50%'),
+          
+          numericInput("lambda", 
+                       label = "Lambda", 
+                       value = '',
+                       width='50%'),
+            
             textOutput("ssr"),
             textOutput("b0"),
             textOutput("b1"),
@@ -58,7 +75,7 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-  myplot <- eventReactive(input$lambda,{
+  myplot <- eventReactive(c(input$lambda,input$mix),{
 
       grid    <- expand.grid(b0=seq(-10,10,.1),b1=seq(-5,5,.01))           
       grid$SSR <- NA
@@ -68,7 +85,12 @@ server <- function(input, output) {
       X     <- matrix(d$mean.wl,ncol=20,nrow=nrow(grid),byrow=TRUE)
       Y_hat <- B0 + X*B1
       Y     <- matrix(d$target,ncol=20,nrow=nrow(grid),byrow=TRUE)
-      P     <- input$lambda*(grid$b0^2 + grid$b1^2)
+      
+      P1     <- grid$b0^2 + grid$b1^2
+      P2     <- abs(grid$b0) + abs(grid$b1)
+      
+      P      <- input$lambda*((1-input$mix)*P1 + input$mix*P2)
+      
       grid$SSR <- rowSums((Y - Y_hat)^2) + P
 
       pl <- plot_ly(grid, x = ~b0, y = ~b1, z = ~SSR, 
