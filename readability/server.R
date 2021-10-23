@@ -1,4 +1,32 @@
 library(shiny)
+################################################################################
+
+setwd("B:/shinyserver/shiny-server/readability")
+
+load("B:/shinyserver/models.RData")
+
+require(quanteda)
+require(quanteda.textstats)
+require(udpipe)
+require(reticulate)
+require(text)
+
+ud_eng <- udpipe_load_model('english-ewt-ud-2.5-191206.udpipe')
+
+reticulate::import('torch')
+reticulate::import('numpy')
+reticulate::import('transformers')
+reticulate::import('nltk')
+reticulate::import('tokenizers')
+
+require(caret)
+require(glmnet)
+
+
+################################################################################
+
+
+################################################################################
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -9,7 +37,11 @@ shinyServer(function(input, output) {
   
   guessm <- eventReactive(input$predict, {
     colnames(values$df_data) <- c("Score")
-    values$df_data[1,1] = 0
+
+    newinput <- generate_feats(my.model = ridge,
+                               new.text = input$mytext)
+    
+    values$df_data[1,1] = predict(ridge,newinput$input)
     values$df_data
   })
   
